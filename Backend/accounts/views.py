@@ -1,4 +1,4 @@
-from rest_framework import generics
+from rest_framework import generics, status
 from accounts.models import CustomUser
 from accounts.serializers import RegisterSerializer, LoginSerializer, LogoutSerializer
 from rest_framework.response import Response
@@ -25,21 +25,16 @@ class LoginView(generics.GenericAPIView):
 
 class LogoutView(generics.GenericAPIView):
     serializer_class = LogoutSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     @swagger_auto_schema(request_body=LogoutSerializer)
     def post(self, request):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        try:
-            refresh_token = serializer.validated_data["refresh"]
-            token = RefreshToken(refresh_token)
-            token.blacklist()
-            return Response(
-                {"message": "Logout successful"}, status=status.HTTP_205_RESET_CONTENT
-            )
-        except Exception as e:
-            return Response(
-                {"error": "Invalid refresh token"}, status=status.HTTP_400_BAD_REQUEST
-            )
+        refresh_token = serializer.validated_data["refresh"]
+        RefreshToken(refresh_token).blacklist()  
+
+        return Response(
+            {"message": "Logout successful"}, status=status.HTTP_205_RESET_CONTENT
+        )
