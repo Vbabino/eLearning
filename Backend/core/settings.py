@@ -49,6 +49,12 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     "accounts",
     "drf_yasg",
+    "courses",
+    "api",
+    "chat",
+    "feedback",
+    "notifications",
+    "whiteboard",
 ]
 
 

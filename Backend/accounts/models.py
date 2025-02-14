@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser, BaseUserManager
+from django.contrib.auth.models import AbstractUser, BaseUserManager, Group
 
 
 # Create your models here.
@@ -18,6 +18,7 @@ class CustomUserManager(BaseUserManager):
         user = self.model(email=email, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
+        user.assign_user_group()
         return user
 
     def create_superuser(self, email, password=None, **extra_fields):
@@ -31,15 +32,16 @@ class CustomUserManager(BaseUserManager):
 class CustomUser(AbstractUser):
     """Custom user model where email is the unique identifier instead of username"""
 
-    username = None  # 🔥 Remove username field from AbstractUser
+    username = None
     email = models.EmailField(unique=True)
     USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = []  # Remove username requirement
+    REQUIRED_FIELDS = []
 
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
     photo = models.ImageField(upload_to="profile_pics/", null=True, blank=True)
     user_type = models.CharField(max_length=10, choices=USER_TYPES)
+    is_approved = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     groups = models.ManyToManyField(
@@ -54,6 +56,17 @@ class CustomUser(AbstractUser):
     )
 
     objects = CustomUserManager()
+
+    def assign_user_group(user): 
+        """Assign user to a group based on user_type"""
+        if user.user_type == "student":
+            group, _ = Group.objects.get_or_create(name="Students")
+        elif user.user_type == "teacher":
+            group, _ = Group.objects.get_or_create(name="Teachers")
+        else:
+            return
+
+        user.groups.add(group)
 
 
 class StatusUpdate(models.Model):
