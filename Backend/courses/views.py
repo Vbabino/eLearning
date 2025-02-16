@@ -5,12 +5,12 @@ from rest_framework.permissions import BasePermission, SAFE_METHODS
 
 
 class IsTeacher(BasePermission):
-    message = "Editing courses is restricted to the creator of the course only."
+    message = "Editing or deleting courses is restricted to the creator of the course only."
 
     def has_permission(self, request, view):
         return request.user.is_authenticated and request.user.user_type == "teacher"
 
-    def has_object_permission(self, request, view, obj):
+    def has_object_permission(self, request, view, obj):  # -> Any | Literal[True]:
         if request.method in SAFE_METHODS:
             return True
 
@@ -26,7 +26,7 @@ class CourseListView(generics.ListCreateAPIView):
     def get_permissions(self):
         if self.request.method == "POST":
             return [IsTeacher()]
-        return [permissions.AllowAny()]
+        return [permissions.IsAuthenticated()]
 
 
 class CourseDetailView(generics.RetrieveAPIView):
@@ -61,7 +61,7 @@ class CourseEnrollView(generics.CreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def perform_create(self, serializer):
-        serializer.save(students=[self.request.user])
+        serializer.save(student=self.request.user)
 
 
 class TeacherEnrolledStudentsView(generics.ListAPIView):
