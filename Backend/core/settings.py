@@ -47,8 +47,8 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt",
     "rest_framework_simplejwt.token_blacklist",
     "rest_framework.authtoken",
+    "drf_spectacular",
     "accounts",
-    "drf_yasg",
     "courses",
     "api",
     "chat",
@@ -61,9 +61,20 @@ INSTALLED_APPS = [
 REST_USE_JWT = True
 
 REST_FRAMEWORK = {
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
+}
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "eLearning API",
+    "DESCRIPTION": "API documentation for the eLearning platform",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,  
+    "SWAGGER_UI_SETTINGS": {
+        "persistAuthorization": True,  
+    },
 }
 
 
