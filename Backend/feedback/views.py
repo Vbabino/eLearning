@@ -25,3 +25,6 @@ class FeedbackView(generics.ListCreateAPIView):
         if self.request.method == "POST":
             return [IsStudent()]
         return [permissions.IsAuthenticated()]
+
+    def perform_create(self, serializer):
+        serializer.save(student=self.request.user)

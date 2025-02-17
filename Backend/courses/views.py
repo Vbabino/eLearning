@@ -2,6 +2,7 @@ from .models import Course, Enrollment
 from .serializers import CourseSerializer, EnrollmentSerializer
 from rest_framework import generics, permissions
 from rest_framework.permissions import BasePermission, SAFE_METHODS
+from notifications.tasks import notify_teacher_on_enrollment, notify_students_on_material_upload
 
 
 class IsTeacher(BasePermission):
@@ -27,6 +28,9 @@ class CourseListView(generics.ListCreateAPIView):
         if self.request.method == "POST":
             return [IsTeacher()]
         return [permissions.IsAuthenticated()]
+    
+    def perform_create(self, serializer):
+        serializer.save(teacher=self.request.user)
 
 
 class CourseDetailView(generics.RetrieveAPIView):
@@ -61,7 +65,31 @@ class CourseEnrollView(generics.CreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def perform_create(self, serializer):
-        serializer.save(student=self.request.user)
+        enrollment = serializer.save(student=self.request.user)
+        notify_teacher_on_enrollment.delay(
+            course_id=enrollment.course.id,
+            student_name=self.request.user.username,
+            teacher_id=enrollment.course.teacher.id,
+        )
+
+class CourseMaterialUploadView(generics.CreateAPIView):
+    """Teachers can upload course material."""
+
+    queryset = Course.objects.all()
+    serializer_class = CourseSerializer
+    permission_classes = [IsTeacher]
+
+    def perform_create(self, serializer):
+        material = serializer.save()
+        enrolled_students = Enrollment.objects.filter(
+            course=material.course
+        ).values_list("student__id", flat=True)
+
+        notify_students_on_material_upload.delay(
+            course_id=material.course.id,
+            teacher_name=self.request.user.email,
+            student_ids=list(enrolled_students),
+        )
 
 
 class TeacherEnrolledStudentsView(generics.ListAPIView):

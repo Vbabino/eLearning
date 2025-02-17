@@ -37,3 +37,4 @@ class LogoutView(generics.GenericAPIView):
         return Response(
             {"message": "Logout successful"}, status=status.HTTP_205_RESET_CONTENT
         )
+    
