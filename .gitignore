@@ -15,7 +15,7 @@ staticfiles/
 venv/
 env/
 .venv/
-
+dump.rdb
 *.pdf
 # React + Vite
 # Dependencies
