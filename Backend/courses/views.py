@@ -1,6 +1,7 @@
 from .models import Course, Enrollment
 from .serializers import CourseSerializer, EnrollmentSerializer
 from rest_framework import generics, permissions
+from drf_spectacular.utils import extend_schema
 from rest_framework.permissions import BasePermission, SAFE_METHODS
 from notifications.tasks import notify_teacher_on_enrollment, notify_students_on_material_upload
 
@@ -95,8 +96,21 @@ class CourseMaterialUploadView(generics.CreateAPIView):
 class TeacherEnrolledStudentsView(generics.ListAPIView):
     """Teachers can view students enrolled in their course."""
 
-    serializer_class = EnrollmentSerializer
-    permission_classes = [IsTeacher]
-
     def get_queryset(self):
-        return Enrollment.objects.filter(course__teacher=self.request.user)
+        """Ensure only authenticated teachers can fetch enrolled students."""
+        if getattr(self, "swagger_fake_view", False):  
+            return Enrollment.objects.none()
+
+        if (
+            self.request.user.is_authenticated
+            and self.request.user.user_type == "teacher"
+        ):
+            return Enrollment.objects.filter(course__teacher=self.request.user)
+        return Enrollment.objects.none()  
+
+    @extend_schema(
+        description="Teachers can view students enrolled in their courses.",
+        responses={200: EnrollmentSerializer(many=True)},
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)

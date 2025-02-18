@@ -1,10 +1,17 @@
 from rest_framework import generics, status
 from accounts.models import CustomUser
-from accounts.serializers import RegisterSerializer, LoginSerializer, LogoutSerializer
+from accounts.serializers import (
+    RegisterSerializer,
+    LoginSerializer,
+    LogoutSerializer,
+    UserSerializer,
+)
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.response import Response
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
 from drf_spectacular.utils import extend_schema
+from accounts.filters import CustomUserFilter
 
 class RegisterView(generics.CreateAPIView):
     queryset = CustomUser.objects.all()
@@ -37,4 +44,10 @@ class LogoutView(generics.GenericAPIView):
         return Response(
             {"message": "Logout successful"}, status=status.HTTP_205_RESET_CONTENT
         )
-    
+
+class UserSearchView(generics.ListAPIView):
+    queryset = CustomUser.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated]
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = CustomUserFilter

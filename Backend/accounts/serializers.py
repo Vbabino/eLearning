@@ -4,6 +4,13 @@ from accounts.models import CustomUser
 from rest_framework_simplejwt.tokens import RefreshToken
 
 
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ["id", "email", "first_name", "last_name", "user_type"]
+        extra_kwargs = {"id": {"read_only": True}}
+
 class RegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
