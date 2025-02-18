@@ -1,5 +1,5 @@
-from .models import Course, Enrollment
-from .serializers import CourseSerializer, EnrollmentSerializer
+from .models import Course, Enrollment, CourseMaterial
+from .serializers import CourseSerializer, EnrollmentSerializer, CourseMaterialSerializer
 from rest_framework import generics, permissions, status
 from drf_spectacular.utils import extend_schema
 from rest_framework.response import Response
@@ -91,12 +91,14 @@ class CourseEnrollView(generics.CreateAPIView):
 class CourseMaterialUploadView(generics.CreateAPIView):
     """Teachers can upload course material."""
 
-    queryset = Course.objects.all()
-    serializer_class = CourseSerializer
+    queryset = CourseMaterial.objects.all()
+    serializer_class = CourseMaterialSerializer
     permission_classes = [IsTeacher]
 
     def perform_create(self, serializer):
+        """ Ensure course exists and notify students."""
         material = serializer.save()
+        
         enrolled_students = Enrollment.objects.filter(
             course=material.course
         ).values_list("student__id", flat=True)

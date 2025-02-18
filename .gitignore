@@ -7,12 +7,16 @@ local_settings.py
 db.sqlite3
 db.sqlite3-journal
 media/  # Ignore uploaded media files
+media/*
+media/**/*
+!media/.gitkeep
 staticfiles/  
 .env  
 venv/
 env/
 .venv/
 
+*.pdf
 # React + Vite
 # Dependencies
 node_modules/
@@ -55,3 +59,4 @@ yarn-error.log*
 # Python Virtual Environment (Alternative Naming)
 Pipfile
 Pipfile.lock
+

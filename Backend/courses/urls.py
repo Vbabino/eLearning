@@ -8,6 +8,11 @@ urlpatterns = [
     path("<int:pk>/delete/", views.CourseDeleteView.as_view(), name="course-delete"),
     path("<int:pk>/enroll/", views.CourseEnrollView.as_view(), name="course-enroll"),
     path(
+        "<int:pk>/materials/",
+        views.CourseMaterialUploadView.as_view(),
+        name="course-materials",
+    ),
+    path(
         "teacher/students/",
         views.TeacherEnrolledStudentsView.as_view(),
         name="teacher-students",
