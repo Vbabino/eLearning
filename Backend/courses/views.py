@@ -1,13 +1,19 @@
 from .models import Course, Enrollment
 from .serializers import CourseSerializer, EnrollmentSerializer
-from rest_framework import generics, permissions
+from rest_framework import generics, permissions, status
 from drf_spectacular.utils import extend_schema
+from rest_framework.response import Response
 from rest_framework.permissions import BasePermission, SAFE_METHODS
-from notifications.tasks import notify_teacher_on_enrollment, notify_students_on_material_upload
+from notifications.tasks import (
+    notify_teacher_on_enrollment,
+    notify_students_on_material_upload,
+)
 
 
 class IsTeacher(BasePermission):
-    message = "Editing or deleting courses is restricted to the creator of the course only."
+    message = (
+        "Editing or deleting courses is restricted to the creator of the course only."
+    )
 
     def has_permission(self, request, view):
         return request.user.is_authenticated and request.user.user_type == "teacher"
@@ -16,7 +22,7 @@ class IsTeacher(BasePermission):
         if request.method in SAFE_METHODS:
             return True
 
-        return obj.teacher == request.user
+        return obj.course.teacher == request.user
 
 
 class CourseListView(generics.ListCreateAPIView):
@@ -29,7 +35,7 @@ class CourseListView(generics.ListCreateAPIView):
         if self.request.method == "POST":
             return [IsTeacher()]
         return [permissions.IsAuthenticated()]
-    
+
     def perform_create(self, serializer):
         serializer.save(teacher=self.request.user)
 
@@ -37,9 +43,17 @@ class CourseListView(generics.ListCreateAPIView):
 class CourseDetailView(generics.RetrieveAPIView):
     """Teachers and Students can view details of a course."""
 
-    queryset = Course.objects.all()
     serializer_class = CourseSerializer
     permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        """Ensure only active students can access course details."""
+        user = self.request.user
+        if user.user_type == "teacher":
+            return Course.objects.all().filter(teacher=user)
+        return Course.objects.filter(
+            enrollments__student=user, enrollments__is_active=True
+        )
 
 
 class CourseUpdateView(generics.RetrieveUpdateAPIView):
@@ -73,6 +87,7 @@ class CourseEnrollView(generics.CreateAPIView):
             teacher_id=enrollment.course.teacher.id,
         )
 
+
 class CourseMaterialUploadView(generics.CreateAPIView):
     """Teachers can upload course material."""
 
@@ -98,7 +113,7 @@ class TeacherEnrolledStudentsView(generics.ListAPIView):
 
     def get_queryset(self):
         """Ensure only authenticated teachers can fetch enrolled students."""
-        if getattr(self, "swagger_fake_view", False):  
+        if getattr(self, "swagger_fake_view", False):
             return Enrollment.objects.none()
 
         if (
@@ -106,7 +121,7 @@ class TeacherEnrolledStudentsView(generics.ListAPIView):
             and self.request.user.user_type == "teacher"
         ):
             return Enrollment.objects.filter(course__teacher=self.request.user)
-        return Enrollment.objects.none()  
+        return Enrollment.objects.none()
 
     @extend_schema(
         description="Teachers can view students enrolled in their courses.",
@@ -114,3 +129,58 @@ class TeacherEnrolledStudentsView(generics.ListAPIView):
     )
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
+
+
+class RemoveStudentView(generics.UpdateAPIView):
+    """Teachers can remove students from their course."""
+
+    serializer_class = EnrollmentSerializer
+    permission_classes = [IsTeacher]
+    lookup_field = "pk"
+
+    def get_queryset(self):
+        """Ensure only teachers can remove students from their own courses."""
+        return Enrollment.objects.filter(course__teacher=self.request.user)
+
+    def update(self, request, *args, **kwargs):
+        """Set `is_active` to False."""
+        enrollment = self.get_object()
+
+        if enrollment.course.teacher != request.user:
+            return Response(
+                {"error": "You can only remove students from your own courses."},
+                status=403,
+            )
+
+        enrollment.is_active = False
+        enrollment.save()
+        return Response(
+            {"message": "Student removed from course."}, status=status.HTTP_200_OK
+        )
+
+class UnblockStudentView(generics.UpdateAPIView):
+    """Teachers can unblock students from their course."""
+
+    serializer_class = EnrollmentSerializer
+    permission_classes = [IsTeacher]
+    lookup_field = "pk"
+
+    def get_queryset(self):
+        """Ensure only teachers can unblock students from their own courses."""
+        return Enrollment.objects.filter(course__teacher=self.request.user)
+
+    def update(self, request, *args, **kwargs):
+        """Set `is_active` to True."""
+        enrollment = self.get_object()
+
+        if enrollment.course.teacher != request.user:
+            return Response(
+                {"error": "You can only unblock students from your own courses."},
+                status=403,
+            )
+
+        enrollment.is_active = True
+        enrollment.save()
+        return Response(
+            {"message": "Student unblocked from course."}, status=status.HTTP_200_OK
+        )

@@ -35,3 +35,4 @@ class Enrollment(models.Model):
         Course, on_delete=models.CASCADE, related_name="enrolled_students"
     )
     enrolled_at = models.DateTimeField(auto_now_add=True)
+    is_active = models.BooleanField(default=True)
