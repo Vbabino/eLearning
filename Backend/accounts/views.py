@@ -5,6 +5,8 @@ from accounts.serializers import (
     LoginSerializer,
     LogoutSerializer,
     UserSerializer,
+    RequestPasswordResetSerializer,
+    VerifyOTPSerializer,
 )
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.response import Response
@@ -12,6 +14,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
 from drf_spectacular.utils import extend_schema
 from accounts.filters import CustomUserFilter
+
 
 class RegisterView(generics.CreateAPIView):
     queryset = CustomUser.objects.all()
@@ -51,3 +54,23 @@ class UserSearchView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend]
     filterset_class = CustomUserFilter
+
+class RequestPasswordResetView(generics.GenericAPIView):
+    serializer_class = RequestPasswordResetSerializer
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        return Response(serializer.save(), status=status.HTTP_200_OK)
+
+class VerifyOTPAndResetPasswordView(generics.GenericAPIView):
+    serializer_class = VerifyOTPSerializer
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        return Response(serializer.validated_data)
+        
+        
