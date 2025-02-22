@@ -1,5 +1,5 @@
-import React, { useState } from 'react' 
-import { Link, useNavigate } from 'react-router-dom' 
+import React, { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import {
   CButton,
   CCard,
@@ -16,13 +16,12 @@ import {
 import CIcon from '@coreui/icons-react'
 import { cilLockLocked, cilUser } from '@coreui/icons'
 import api from '../../../services/api'
-import { ACCESS_TOKEN, REFRESH_TOKEN } from '../../../constants' 
+import { ACCESS_TOKEN, REFRESH_TOKEN } from '../../../constants'
 
 const Login = () => {
-  
-  const navigate = useNavigate() 
-  const [formData, setFormData] = useState({ email: '', password: '' }) 
-  const [loading, setLoading] = useState(false) 
+  const navigate = useNavigate()
+  const [formData, setFormData] = useState({ otp: '', email: '', new_password: '' })
+  const [loading, setLoading] = useState(false)
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value })
@@ -38,16 +37,12 @@ const Login = () => {
       localStorage.removeItem(REFRESH_TOKEN)
 
       // Make login request
-      const res = await api.post('/api/auth/login/', formData)
-
-      // Store new tokens
-      localStorage.setItem(ACCESS_TOKEN, res.data.access)
-      localStorage.setItem(REFRESH_TOKEN, res.data.refresh)
-
-      // Redirect user to home page after login
-      navigate('/')
+      const res = await api.post('/api/auth/verify-otp-reset-password/', formData)
+      console.log(res)
+      alert('Password reset successful')
+      navigate('/login')
     } catch (error) {
-      alert(error.response?.data?.detail || 'Login failed')
+      alert(error.response?.data?.detail || 'Password reset failed')
     } finally {
       setLoading(false)
     }
@@ -62,8 +57,19 @@ const Login = () => {
               <CCard className="p-4">
                 <CCardBody>
                   <CForm onSubmit={handleSubmit}>
-                    <h1>Login</h1>
-                    <p className="text-body-secondary">Sign In to your account</p>
+                    <h1>Reset Password</h1>
+                    <p className="text-body-secondary">Enter below requirements</p>
+                    <CInputGroup className="mb-4">
+                      <CInputGroupText>
+                        <CIcon icon={cilLockLocked} />
+                      </CInputGroupText>
+                      <CFormInput
+                        placeholder="OTP"
+                        name="otp"
+                        value={formData.otp}
+                        onChange={handleChange}
+                      />
+                    </CInputGroup>
                     <CInputGroup className="mb-3">
                       <CInputGroupText>
                         <CIcon icon={cilUser} />
@@ -82,10 +88,10 @@ const Login = () => {
                       </CInputGroupText>
                       <CFormInput
                         type="password"
-                        placeholder="Password"
-                        autoComplete="current-password"
-                        name="password"
-                        value={formData.password}
+                        placeholder="New password"
+                        autoComplete="new-password"
+                        name="new_password"
+                        value={formData.new_password}
                         onChange={handleChange}
                       />
                     </CInputGroup>
@@ -96,30 +102,12 @@ const Login = () => {
                         </CButton>
                       </CCol>
                       <CCol xs={6} className="text-right">
-                        <Link to="/password-reset">
-                          <CButton color="link" className="px-0">
-                            Forgot password?
-                          </CButton>
-                        </Link>
+                        <CButton color="link" className="px-0">
+                          Forgot password?
+                        </CButton>
                       </CCol>
                     </CRow>
                   </CForm>
-                </CCardBody>
-              </CCard>
-              <CCard className="text-white bg-primary py-5" style={{ width: '44%' }}>
-                <CCardBody className="text-center">
-                  <div>
-                    <h2>Sign up</h2>
-                    <p>
-                      Join our eLearning platform to access interactive courses, expert instructors,
-                      and a supportive learning community. Start your educational journey today!
-                    </p>
-                    <Link to="/register">
-                      <CButton color="primary" className="mt-3" active tabIndex={-1}>
-                        Register Now!
-                      </CButton>
-                    </Link>
-                  </div>
                 </CCardBody>
               </CCard>
             </CCardGroup>
