@@ -16,7 +16,7 @@ import {
 import CIcon from '@coreui/icons-react'
 import {  cilUser } from '@coreui/icons'
 import api from '../../../services/api'
-import { ACCESS_TOKEN, REFRESH_TOKEN } from '../../../constants'
+import { ACCESS_TOKEN, REFRESH_TOKEN, IS_APPROVED, ID } from '../../../constants'
 
 const Login = () => {
   const navigate = useNavigate()
@@ -35,7 +35,9 @@ const Login = () => {
       // Clear any previous session tokens before storing new ones
       localStorage.removeItem(ACCESS_TOKEN)
       localStorage.removeItem(REFRESH_TOKEN)
-
+      localStorage.removeItem(IS_APPROVED)
+      localStorage.removeItem(ID)
+      
       // Make password reset request
       const res = await api.post('/api/auth/request-password-reset/', formData)
 

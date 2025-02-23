@@ -1,13 +1,6 @@
 from rest_framework import generics, status
 from accounts.models import CustomUser
-from accounts.serializers import (
-    RegisterSerializer,
-    LoginSerializer,
-    LogoutSerializer,
-    UserSerializer,
-    RequestPasswordResetSerializer,
-    VerifyOTPSerializer,
-)
+from accounts.serializers import *
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -48,12 +41,39 @@ class LogoutView(generics.GenericAPIView):
             {"message": "Logout successful"}, status=status.HTTP_205_RESET_CONTENT
         )
 
+
 class UserSearchView(generics.ListAPIView):
     queryset = CustomUser.objects.all()
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend]
     filterset_class = CustomUserFilter
+
+
+class UserDetailView(generics.RetrieveUpdateAPIView):
+    queryset = CustomUser.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated]
+
+
+class UploadProfilePhotoView(generics.UpdateAPIView):
+    serializer_class = UserProfilePhotoSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return CustomUser.objects.filter(id=self.request.user.id)
+
+    def perform_update(self, serializer):
+        serializer.save(photo=self.request.FILES.get("photo"))
+
+
+class GetProfilePhotoView(generics.RetrieveAPIView):
+    serializer_class = UserProfilePhotoSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return CustomUser.objects.filter(id=self.request.user.id)
+
 
 class RequestPasswordResetView(generics.GenericAPIView):
     serializer_class = RequestPasswordResetSerializer
@@ -64,6 +84,7 @@ class RequestPasswordResetView(generics.GenericAPIView):
         serializer.is_valid(raise_exception=True)
         return Response(serializer.save(), status=status.HTTP_200_OK)
 
+
 class VerifyOTPAndResetPasswordView(generics.GenericAPIView):
     serializer_class = VerifyOTPSerializer
     permission_classes = [AllowAny]
@@ -72,5 +93,3 @@ class VerifyOTPAndResetPasswordView(generics.GenericAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         return Response(serializer.validated_data)
-        
-        

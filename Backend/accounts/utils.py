@@ -16,3 +16,18 @@ def send_otp_email(user, otp):
         [user.email],
         fail_silently=False,
     )
+
+def send_approval_email(user):
+    subject = "Your Account Has Been Approved"
+    message = "Congratulations! Your account has been approved."
+
+    email_path = os.path.join(settings.EMAIL_FILE_PATH)
+    os.makedirs(email_path, exist_ok=True)
+
+    send_mail(
+        subject,
+        message,
+        settings.DEFAULT_FROM_EMAIL,
+        [user.email],
+        fail_silently=False,
+    )

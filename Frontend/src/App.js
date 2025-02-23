@@ -1,5 +1,5 @@
 import React, { Suspense, useEffect } from 'react'
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import ProtectedRoute from './components/ProtectedRoute'
 import { CSpinner, useColorModes } from '@coreui/react'
@@ -18,16 +18,8 @@ const PasswordReset = React.lazy(() => import('./views/pages/login/Password-rese
 const VerifyOTP = React.lazy(() => import('./views/pages/login/Verify-OTP'))
 const Page404 = React.lazy(() => import('./views/pages/page404/Page404'))
 const Page500 = React.lazy(() => import('./views/pages/page500/Page500'))
+const PendingApproval = React.lazy(() => import('./views/pages/login/PendingApproval'))
 
-function Logout() {
-  localStorage.clear()
-  return <Navigate to="/login" />
-}
-
-function RegisterAndLogout() {
-  localStorage.clear()
-  return <Navigate to="/register" />
-}
 
 const App = () => {
   const { isColorModeSet, setColorMode } = useColorModes('coreui-free-react-admin-template-theme')
@@ -58,12 +50,12 @@ const App = () => {
       >
         <Routes>
           <Route exact path="/login" name="Login Page" element={<Login />} />
-          <Route exact path="/logout" name="Logout Page" element={<Logout />} />
           <Route exact path="/password-reset" name="Password Reset" element={<PasswordReset />} />
           <Route exact path="/verify-otp" name="Verify OTP" element={<VerifyOTP />} />
           <Route exact path="/register" name="Register Page" element={<Register />} />
           <Route exact path="/404" name="Page 404" element={<Page404 />} />
           <Route exact path="/500" name="Page 500" element={<Page500 />} />
+          <Route exact path="/pending-approval" name="Pending Approval" element={<PendingApproval />} />
           <Route
             path="*"
             name="Home"

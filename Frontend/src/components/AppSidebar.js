@@ -41,12 +41,12 @@ const AppSidebar = () => {
       <CSidebarHeader className="border-bottom">
         <CSidebarBrand to="/">
           <CContainer>
-            <CRow>
-              <CCol>
-                <CIcon icon={cilEducation} height={32} />
+            <CRow >
+              <CCol >
+                <CIcon icon={cilEducation} height={24} />
               </CCol>
               <CCol>
-                <p>E-Learning App</p>
+                E-Learning App
               </CCol>
             </CRow>
           </CContainer>

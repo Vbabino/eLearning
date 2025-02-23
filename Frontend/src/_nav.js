@@ -45,12 +45,12 @@ const _nav = [
       },
       {
         component: CNavItem,
-        name: 'Find Students',
-        to: '/base/accordion',
+        name: 'Search Users',
+        to: '/teachers/user-search',
       },
       {
         component: CNavItem,
-        name: 'Remove/Unblock Students',
+        name: 'Manage Students',
         to: '/base/accordion',
       },
     ],

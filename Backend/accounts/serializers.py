@@ -13,8 +13,12 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = ["id", "email", "first_name", "last_name", "user_type"]
-        extra_kwargs = {"id": {"read_only": True}}
+        read_only_fields = ["id", "email","user_type"]
 
+class UserProfilePhotoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ["photo"]
 
 class RegisterSerializer(serializers.ModelSerializer):
     class Meta:
@@ -44,6 +48,7 @@ class LoginSerializer(serializers.Serializer):
             "user": {
                 "id": user.id,
                 "email": user.email,
+                "is_approved": user.is_approved,
             },
         }
 

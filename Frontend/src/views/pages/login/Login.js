@@ -1,5 +1,5 @@
-import React, { useState } from 'react' 
-import { Link, useNavigate } from 'react-router-dom' 
+import React, { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import {
   CButton,
   CCard,
@@ -16,13 +16,12 @@ import {
 import CIcon from '@coreui/icons-react'
 import { cilLockLocked, cilUser } from '@coreui/icons'
 import api from '../../../services/api'
-import { ACCESS_TOKEN, REFRESH_TOKEN } from '../../../constants' 
+import { ACCESS_TOKEN, REFRESH_TOKEN, IS_APPROVED, ID } from '../../../constants'
 
 const Login = () => {
-  
-  const navigate = useNavigate() 
-  const [formData, setFormData] = useState({ email: '', password: '' }) 
-  const [loading, setLoading] = useState(false) 
+  const navigate = useNavigate()
+  const [formData, setFormData] = useState({ email: '', password: '' })
+  const [loading, setLoading] = useState(false)
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value })
@@ -36,15 +35,19 @@ const Login = () => {
       // Clear any previous session tokens before storing new ones
       localStorage.removeItem(ACCESS_TOKEN)
       localStorage.removeItem(REFRESH_TOKEN)
+      localStorage.removeItem(IS_APPROVED)
+      localStorage.removeItem(ID)
 
       // Make login request
       const res = await api.post('/api/auth/login/', formData)
-
       // Store new tokens
       localStorage.setItem(ACCESS_TOKEN, res.data.access)
       localStorage.setItem(REFRESH_TOKEN, res.data.refresh)
+      localStorage.setItem(ID, res.data.user.id)
+      localStorage.setItem(IS_APPROVED, res.data.user.is_approved)
 
       // Redirect user to home page after login
+
       navigate('/')
     } catch (error) {
       alert(error.response?.data?.detail || 'Login failed')

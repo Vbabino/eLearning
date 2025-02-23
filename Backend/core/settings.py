@@ -95,7 +95,7 @@ SIMPLE_JWT = {
 AUTH_USER_MODEL = "accounts.CustomUser"
 
 EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
-EMAIL_FILE_PATH = os.path.join(BASE_DIR, "OTP_Email")
+EMAIL_FILE_PATH = os.path.join(BASE_DIR, "Email_Simulation")
 
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",

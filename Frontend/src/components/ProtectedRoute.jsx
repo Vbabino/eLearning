@@ -1,7 +1,7 @@
 import { Navigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import api from "../services/api";
-import { REFRESH_TOKEN, ACCESS_TOKEN } from "../constants";
+import { REFRESH_TOKEN, ACCESS_TOKEN, IS_APPROVED } from "../constants";
 import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 
@@ -19,7 +19,7 @@ function ProtectedRoute({ children }) {
             const res = await api.post("/api/auth/token/refresh/", {
                 refresh: refreshToken,
             });
-            if (res.status === 200) {
+            if (res.status >= 200 && res.status < 300) {
                 localStorage.setItem(ACCESS_TOKEN, res.data.access)
                 setIsAuthorized(true)
             } else {
@@ -47,9 +47,16 @@ function ProtectedRoute({ children }) {
             setIsAuthorized(true);
         }
     };
+    // Check if the user is approved
+    
 
     if (isAuthorized === null) {
         return <div>Loading...</div>;
+    }
+    
+    const isApproved = localStorage.getItem(IS_APPROVED) === "true";
+    if (!isApproved) {
+        return <Navigate to="/pending-approval" />;
     }
 
     return isAuthorized ? children : <Navigate to="/login" />;

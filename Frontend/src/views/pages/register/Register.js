@@ -14,7 +14,7 @@ import {
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import { cilLockLocked, cilUser } from '@coreui/icons'
-import { ACCESS_TOKEN, REFRESH_TOKEN } from '../../../constants'
+import { ACCESS_TOKEN, REFRESH_TOKEN, IS_APPROVED, ID } from '../../../constants'
 import { useNavigate } from 'react-router-dom' 
 import api from '../../../services/api'
 
@@ -22,6 +22,8 @@ const Register = () => {
   // Clear any previous session tokens before storing new ones
   localStorage.removeItem(ACCESS_TOKEN)
   localStorage.removeItem(REFRESH_TOKEN)
+  localStorage.removeItem(IS_APPROVED)
+  localStorage.removeItem(ID)
   
   const navigate = useNavigate()
   const [formData, setFormData] = useState({
@@ -41,7 +43,6 @@ const Register = () => {
 
     try {
       const res = await api.post('/api/auth/register/', formData)
-      console.log(res) 
       alert('Registration successful')
       navigate('/login')
     } catch (error) {
