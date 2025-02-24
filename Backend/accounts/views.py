@@ -68,11 +68,11 @@ class UploadProfilePhotoView(generics.UpdateAPIView):
 
 
 class GetProfilePhotoView(generics.RetrieveAPIView):
+    queryset = CustomUser.objects.all() 
     serializer_class = UserProfilePhotoSerializer
     permission_classes = [IsAuthenticated]
 
-    def get_queryset(self):
-        return CustomUser.objects.filter(id=self.request.user.id)
+    
 
 
 class RequestPasswordResetView(generics.GenericAPIView):

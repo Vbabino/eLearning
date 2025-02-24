@@ -42,17 +42,21 @@ const AppHeaderDropdown = () => {
 
     try {
       const res = await api.post('/api/auth/logout/', { refresh: refreshToken })
-      if (res.status >= 200 && res.status < 300) {
-        localStorage.removeItem(ACCESS_TOKEN)
-        localStorage.removeItem(REFRESH_TOKEN)
-        localStorage.removeItem(IS_APPROVED)
-        localStorage.removeItem(ID)
 
-        localStorage.clear()
-        navigate('/login', { replace: true })
+      if (res.status >= 200 && res.status < 300) {
+        console.log('Successfully logged out.')
+      } else {
+        console.error('Unexpected logout response:', res.status)
       }
     } catch (error) {
       console.error('Logout error:', error)
+    } finally {
+      localStorage.removeItem(ACCESS_TOKEN)
+      localStorage.removeItem(REFRESH_TOKEN)
+      localStorage.removeItem(IS_APPROVED)
+      localStorage.removeItem(ID)
+      localStorage.clear()
+      navigate('/login', { replace: true })
     }
   }
 

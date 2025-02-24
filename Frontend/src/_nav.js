@@ -1,23 +1,28 @@
 import React from 'react'
 import CIcon from '@coreui/icons-react'
-import {
-  cilCursor,
-  cilSpeedometer,
-  cilEducation,
-  cilBook,
-} from '@coreui/icons'
+import { cilCursor, cilEducation, cilBook, cilSearch } from '@coreui/icons'
 import { CNavGroup, CNavItem, CNavTitle } from '@coreui/react'
 
 const _nav = [
   {
     component: CNavItem,
-    name: 'Dashboard',
+    name: 'Search Courses',
     to: '/dashboard',
-    icon: <CIcon icon={cilSpeedometer} customClassName="nav-icon" />,
+    icon: <CIcon icon={cilSearch} customClassName="nav-icon" />,
     badge: {
       color: 'info',
     },
   },
+  {
+    component: CNavItem,
+    name: 'Search Users',
+    to: '/user/user-search/',
+    icon: <CIcon icon={cilSearch} customClassName="nav-icon" />,
+    badge: {
+      color: 'info',
+    },
+  },
+
   {
     component: CNavTitle,
     name: 'Teachers',
@@ -42,11 +47,6 @@ const _nav = [
         component: CNavItem,
         name: 'Upload Materials',
         to: '/base/accordion',
-      },
-      {
-        component: CNavItem,
-        name: 'Search Users',
-        to: '/teachers/user-search',
       },
       {
         component: CNavItem,

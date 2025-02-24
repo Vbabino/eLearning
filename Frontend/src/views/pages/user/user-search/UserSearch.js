@@ -10,12 +10,14 @@ import {
   CFormSelect,
 } from '@coreui/react'
 
-import api from '../../../services/api'
+import api from '../../../../services/api'
+import { useNavigate } from 'react-router-dom'
 
 const UserSearch = () => {
-  const [query, setQuery] = useState('') 
-  const [searchField, setSearchField] = useState('last_name__icontains') 
-  const [users, setUsers] = useState([]) 
+  const [query, setQuery] = useState('')
+  const [searchField, setSearchField] = useState('last_name__icontains')
+  const [users, setUsers] = useState([])
+  const navigate = useNavigate()
 
   useEffect(() => {
     if (query.length > 2) {
@@ -29,7 +31,7 @@ const UserSearch = () => {
     } else {
       setUsers([])
     }
-  }, [query, searchField]) // Depend on both query & searchField
+  }, [query, searchField])
 
   return (
     <div>
@@ -65,7 +67,11 @@ const UserSearch = () => {
         </CTableHead>
         <CTableBody>
           {users.map((user, index) => (
-            <CTableRow key={user.id}>
+            <CTableRow
+              key={user.id}
+              onClick={() => navigate(`/user/${user.id}`)}
+              style={{ cursor: 'pointer' }}
+            >
               <CTableDataCell>{index + 1}</CTableDataCell>
               <CTableDataCell>{user.email}</CTableDataCell>
               <CTableDataCell>{user.first_name}</CTableDataCell>

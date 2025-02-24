@@ -42,6 +42,7 @@ const UpdateUser = () => {
 
         <CForm onSubmit={handleSubmit}>
           <CFormInput
+          className='mb-2'
             placeholder="First Name"
             autoComplete="first-name"
             value={formData.first_name}
@@ -49,6 +50,7 @@ const UpdateUser = () => {
             onChange={handleChange}
           />
           <CFormInput
+            className='mb-2'
             placeholder="Last Name"
             autoComplete="last-name"
             value={formData.last_name}
