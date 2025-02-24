@@ -7,7 +7,7 @@ const _nav = [
   {
     component: CNavItem,
     name: 'Search Courses',
-    to: '/dashboard',
+    to: '/courses/list',
     icon: <CIcon icon={cilSearch} customClassName="nav-icon" />,
     badge: {
       color: 'info',

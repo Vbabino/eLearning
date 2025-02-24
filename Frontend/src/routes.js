@@ -15,6 +15,9 @@ const UploadProfilePhoto = React.lazy(() => import('./views/pages/user/upload-pr
 const UserSearch = React.lazy(() => import('./views/pages/user/user-search/UserSearch'))
 // const ManageStudents = React.lazy(() => import('./views/teachers/manage-students/ManageStudents'))
 
+// Courses
+const CoursesList = React.lazy(() => import('./views/pages/courses/coursesList'))
+const CourseDetails = React.lazy(() => import('./views/pages/courses/courseDetails'))
 
 const routes = [
   { path: '/', exact: true, name: 'Home' },
@@ -26,6 +29,10 @@ const routes = [
   { path: '/user/update', name: 'Update User', element: UpdateUser },
   { path: '/user/upload-profile-photo', name: 'Upload Profile Photo', element: UploadProfilePhoto },
 
+  // Courses routes
+  
+  { path: '/courses/list', name: 'Courses List', element: CoursesList },
+  {path: '/courses/:id', name: 'Course Details', element: CourseDetails},
   // Teacher routes
 
   // { path: '/teachers/manage-courses', name: 'Manage Courses', element: ManageCourses },

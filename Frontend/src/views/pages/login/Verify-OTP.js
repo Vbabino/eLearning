@@ -16,7 +16,7 @@ import {
 import CIcon from '@coreui/icons-react'
 import { cilLockLocked, cilUser } from '@coreui/icons'
 import api from '../../../services/api'
-import { ACCESS_TOKEN, REFRESH_TOKEN, IS_APPROVED, ID } from '../../../constants'
+import { ACCESS_TOKEN, REFRESH_TOKEN, IS_APPROVED, ID, USER_TYPE } from '../../../constants'
 
 const Login = () => {
   const navigate = useNavigate()
@@ -37,6 +37,7 @@ const Login = () => {
       localStorage.removeItem(REFRESH_TOKEN)
       localStorage.removeItem(IS_APPROVED)
       localStorage.removeItem(ID)
+      localStorage.removeItem(USER_TYPE)
 
       // Make login request
       const res = await api.post('/api/auth/verify-otp-reset-password/', formData)

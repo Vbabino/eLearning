@@ -49,6 +49,8 @@ class LoginSerializer(serializers.Serializer):
                 "id": user.id,
                 "email": user.email,
                 "is_approved": user.is_approved,
+                "user_type": user.user_type,
+                
             },
         }
 

@@ -3,27 +3,12 @@ from .serializers import CourseSerializer, EnrollmentSerializer, CourseMaterialS
 from rest_framework import generics, permissions, status
 from drf_spectacular.utils import extend_schema
 from rest_framework.response import Response
-from rest_framework.permissions import BasePermission, SAFE_METHODS
 from notifications.tasks import (
     notify_teacher_on_enrollment,
     notify_students_on_material_upload,
 )
 
-
-class IsTeacher(BasePermission):
-    message = (
-        "Editing or deleting courses is restricted to the creator of the course only."
-    )
-
-    def has_permission(self, request, view):
-        return request.user.is_authenticated and request.user.user_type == "teacher"
-
-    def has_object_permission(self, request, view, obj):  # -> Any | Literal[True]:
-        if request.method in SAFE_METHODS:
-            return True
-
-        return obj.course.teacher == request.user
-
+from user_permissions.user_permissions import IsTeacher, IsStudent
 
 class CourseListView(generics.ListCreateAPIView):
     """Teachers can create courses, students can only view courses."""
@@ -39,21 +24,42 @@ class CourseListView(generics.ListCreateAPIView):
     def perform_create(self, serializer):
         serializer.save(teacher=self.request.user)
 
-
-class CourseDetailView(generics.RetrieveAPIView):
-    """Teachers and Students can view details of a course."""
-
+class CourseDetailViewForStudents(generics.RetrieveAPIView):
+    """Students can view details of a course."""
+    queryset = Course.objects.all()
     serializer_class = CourseSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-    def get_queryset(self):
-        """Ensure only active students can access course details."""
-        user = self.request.user
-        if user.user_type == "teacher":
-            return Course.objects.all().filter(teacher=user)
-        return Course.objects.filter(
-            enrollments__student=user, enrollments__is_active=True
-        )
+# TODO: Fix the issue with the course list view
+# class CourseDetailView(generics.RetrieveAPIView):
+#     """Teachers and Students can view details of a course.
+
+#     This view allows authenticated users to retrieve details of a specific course.
+#     The view uses the `CourseSerializer` to serialize the course data and ensures
+#     that only authenticated users can access it by using the `IsAuthenticated`
+#     permission class.
+
+#     The `get_queryset` method customizes the queryset based on the type of user:
+#     - If the user is a teacher, it returns all courses taught by that teacher.
+#     - If the user is a student, it returns only the courses in which the student
+#       is actively enrolled.
+
+#     Methods:
+#     - get_queryset(self): Returns a queryset of courses based on the user's type
+#       and enrollment status.
+#     """
+
+#     serializer_class = CourseSerializer
+#     permission_classes = [permissions.IsAuthenticated]
+
+#     def get_queryset(self):
+#         """Ensure only active students can access course details."""
+#         user = self.request.user
+#         if user.user_type == "teacher":
+#             return Course.objects.all().filter(teacher=user)
+#         return Course.objects.filter(
+#             enrollments__student=user, enrollments__is_active=True
+#         )
 
 
 class CourseUpdateView(generics.RetrieveUpdateAPIView):
@@ -77,7 +83,7 @@ class CourseEnrollView(generics.CreateAPIView):
 
     queryset = Enrollment.objects.all()
     serializer_class = EnrollmentSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsStudent]
 
     def perform_create(self, serializer):
         enrollment = serializer.save(student=self.request.user)

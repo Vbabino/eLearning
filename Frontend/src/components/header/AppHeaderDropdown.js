@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { REFRESH_TOKEN, ACCESS_TOKEN, IS_APPROVED, ID } from '../../constants'
+import { REFRESH_TOKEN, ACCESS_TOKEN, IS_APPROVED, ID, USER_TYPE } from '../../constants'
 import api from '../../services/api'
 import {
   CAvatar,
@@ -55,6 +55,7 @@ const AppHeaderDropdown = () => {
       localStorage.removeItem(REFRESH_TOKEN)
       localStorage.removeItem(IS_APPROVED)
       localStorage.removeItem(ID)
+      localStorage.removeItem(USER_TYPE)
       localStorage.clear()
       navigate('/login', { replace: true })
     }

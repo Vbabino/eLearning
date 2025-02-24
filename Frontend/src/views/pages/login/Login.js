@@ -16,7 +16,7 @@ import {
 import CIcon from '@coreui/icons-react'
 import { cilLockLocked, cilUser } from '@coreui/icons'
 import api from '../../../services/api'
-import { ACCESS_TOKEN, REFRESH_TOKEN, IS_APPROVED, ID } from '../../../constants'
+import { ACCESS_TOKEN, REFRESH_TOKEN, IS_APPROVED, ID, USER_TYPE, IS_ACTIVE } from '../../../constants'
 
 const Login = () => {
   const navigate = useNavigate()
@@ -37,14 +37,19 @@ const Login = () => {
       localStorage.removeItem(REFRESH_TOKEN)
       localStorage.removeItem(IS_APPROVED)
       localStorage.removeItem(ID)
+      localStorage.removeItem(USER_TYPE)
+      localStorage.removeItem(IS_ACTIVE)
 
       // Make login request
       const res = await api.post('/api/auth/login/', formData)
       // Store new tokens
       localStorage.setItem(ACCESS_TOKEN, res.data.access)
       localStorage.setItem(REFRESH_TOKEN, res.data.refresh)
+      // Store user details
+      localStorage.setItem(IS_ACTIVE, res.data.user.is_active)
       localStorage.setItem(ID, res.data.user.id)
       localStorage.setItem(IS_APPROVED, res.data.user.is_approved)
+      localStorage.setItem(USER_TYPE, res.data.user.user_type)
 
       // Redirect user to home page after login
 
