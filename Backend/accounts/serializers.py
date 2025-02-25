@@ -13,12 +13,27 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = ["id", "email", "first_name", "last_name", "user_type"]
-        read_only_fields = ["id", "email","user_type"]
+        read_only_fields = ["id", "email", "user_type"]
+
 
 class UserProfilePhotoSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = ["photo"]
+
+    def validate_profile_photo(self, value):
+        allowed_extensions = ["jpg", "jpeg", "png"]
+        file_extension = value.name.split(".")[-1].lower()
+
+        if file_extension not in allowed_extensions:
+            raise serializers.ValidationError(
+                "Only JPG, JPEG, and PNG files are allowed."
+            )
+
+        if value.size > 5 * 1024 * 1024:
+            raise serializers.ValidationError("Profile photo size exceeds 5MB.")
+        return value
+
 
 class RegisterSerializer(serializers.ModelSerializer):
     class Meta:
@@ -50,7 +65,6 @@ class LoginSerializer(serializers.Serializer):
                 "email": user.email,
                 "is_approved": user.is_approved,
                 "user_type": user.user_type,
-                
             },
         }
 
@@ -83,7 +97,6 @@ class VerifyOTPSerializer(serializers.Serializer):
     otp = serializers.CharField()
     new_password = serializers.CharField(write_only=True, min_length=6)
 
-
     def validate(self, data):
         try:
             user = User.objects.get(email=data["email"])
@@ -94,6 +107,6 @@ class VerifyOTPSerializer(serializers.Serializer):
         if not totp.verify(data["otp"]):
             raise serializers.ValidationError("Invalid OTP.")
 
-        user. set_password(data["new_password"])
+        user.set_password(data["new_password"])
         user.save()
         return {"message": "Password reset successful."}

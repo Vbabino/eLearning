@@ -22,7 +22,7 @@ const CourseDetails = React.lazy(() => import('./views/pages/courses/courseDetai
 const routes = [
   { path: '/', exact: true, name: 'Home' },
   { path: '/dashboard', name: 'Search Course', element: Dashboard },
-
+  
   // User routes
   { path: '/user/view', name: 'View User', element: ViewUser },
   { path: '/user/:id', name: 'User Detail', element: UserDetail },

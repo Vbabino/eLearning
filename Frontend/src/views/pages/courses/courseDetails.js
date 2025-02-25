@@ -7,13 +7,16 @@ import { USER_TYPE, ID } from '../../../constants'
 const CourseDetails = () => {
   const { id } = useParams()
   const [course, setCourse] = useState(null)
+  const [isEnrolled, setIsEnrolled] = useState(false)
   const userType = localStorage.getItem(USER_TYPE)
 
   useEffect(() => {
     api
       .get(`/api/courses/${id}/`)
       .then((response) => {
+        console.log('Course data:', response.data)
         setCourse(response.data)
+        setIsEnrolled(response.data.is_enrolled)
       })
       .catch((error) => {
         console.error('There was an error fetching the course data!', error)
@@ -21,16 +24,21 @@ const CourseDetails = () => {
   }, [id])
 
   const handleEnroll = () => {
+    if (isEnrolled) {
+      alert('You are already enrolled in this course.')
+      return
+    }
     const enrollmentData = {
       student: localStorage.getItem(ID),
       course: id,
       is_active: true,
     }
-
+    console.log('Enrollment data:', enrollmentData)
     api
       .post(`/api/courses/${id}/enroll/`, enrollmentData)
       .then((response) => {
         alert('You have successfully enrolled in the course!')
+        setIsEnrolled(true)
       })
       .catch((error) => {
         console.error('There was an error enrolling in the course!', error)
@@ -58,12 +66,10 @@ const CourseDetails = () => {
         </p>
         <CButton
           color="primary"
-          onClick={() => {
-            handleEnroll()
-          }}
-          disabled={userType !== 'student'}
+          onClick={handleEnroll}
+          disabled={isEnrolled || userType !== 'student'}
         >
-          Enroll
+          {isEnrolled ? 'Already Enrolled' : 'Enroll'}
         </CButton>
       </CCardBody>
     </CCard>

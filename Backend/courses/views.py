@@ -1,6 +1,10 @@
 from .models import Course, Enrollment, CourseMaterial
-from .serializers import CourseSerializer, EnrollmentSerializer, CourseMaterialSerializer
-from rest_framework import generics, permissions, status
+from .serializers import (
+    CourseSerializer,
+    EnrollmentSerializer,
+    CourseMaterialSerializer,
+)
+from rest_framework import generics, permissions, status, serializers
 from drf_spectacular.utils import extend_schema
 from rest_framework.response import Response
 from notifications.tasks import (
@@ -9,6 +13,7 @@ from notifications.tasks import (
 )
 
 from user_permissions.user_permissions import IsTeacher, IsStudent
+
 
 class CourseListView(generics.ListCreateAPIView):
     """Teachers can create courses, students can only view courses."""
@@ -24,11 +29,14 @@ class CourseListView(generics.ListCreateAPIView):
     def perform_create(self, serializer):
         serializer.save(teacher=self.request.user)
 
+
 class CourseDetailViewForStudents(generics.RetrieveAPIView):
     """Students can view details of a course."""
+
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
     permission_classes = [permissions.IsAuthenticated]
+
 
 # TODO: Fix the issue with the course list view
 # class CourseDetailView(generics.RetrieveAPIView):
@@ -86,12 +94,33 @@ class CourseEnrollView(generics.CreateAPIView):
     permission_classes = [IsStudent]
 
     def perform_create(self, serializer):
-        enrollment = serializer.save(student=self.request.user)
+        student = self.request.user
+        course_id = self.kwargs.get("pk")
+        if not course_id:
+            raise serializers.ValidationError("Course ID is required.")
+        course = Course.objects.get(id=course_id)
+
+        # Check if already enrolled
+        if Enrollment.objects.filter(
+            student=student, course=course, is_active=True
+        ).exists():
+            raise serializers.ValidationError(
+                "You are already enrolled in this course."
+            )
+
+        enrollment = serializer.save(student=student, course=course)
+
         notify_teacher_on_enrollment.delay(
             course_id=enrollment.course.id,
-            student_name=self.request.user.username,
+            student_name=student.email,
             teacher_id=enrollment.course.teacher.id,
         )
+
+    def get_serializer_context(self):
+        """Pass request context to serializer so is_enrolled can be computed."""
+        context = super().get_serializer_context()
+        context["request"] = self.request
+        return context
 
 
 class CourseMaterialUploadView(generics.CreateAPIView):
@@ -165,6 +194,7 @@ class RemoveStudentView(generics.UpdateAPIView):
         return Response(
             {"message": "Student removed from course."}, status=status.HTTP_200_OK
         )
+
 
 class UnblockStudentView(generics.UpdateAPIView):
     """Teachers can unblock students from their course."""

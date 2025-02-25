@@ -52,7 +52,7 @@ const AppHeader = () => {
         <CHeaderNav className="d-none d-md-flex">
           <CNavItem>
             <CNavLink to="/dashboard" as={NavLink}>
-              Search Course
+              Welcome!
             </CNavLink>
           </CNavItem>
         </CHeaderNav>

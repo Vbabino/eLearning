@@ -1,11 +1,9 @@
 import React from 'react'
+import WelcomePage from '../../components/WelcomePage'
 
 const Dashboard = () => {
   return (
-    <div>
-      <h1>Find a Course</h1>
-      
-    </div>
+    <WelcomePage />
   )
 }
 
