@@ -13,6 +13,8 @@ from notifications.tasks import (
 )
 
 from user_permissions.user_permissions import IsTeacher, IsStudent
+from courses.filters import CourseFilter
+from django_filters.rest_framework import DjangoFilterBackend
 
 
 class CourseListView(generics.ListCreateAPIView):
@@ -222,3 +224,11 @@ class UnblockStudentView(generics.UpdateAPIView):
         return Response(
             {"message": "Student unblocked from course."}, status=status.HTTP_200_OK
         )
+
+class SearchCourseView(generics.ListAPIView):
+    """Users can search for courses."""
+    queryset = Course.objects.all()
+    serializer_class = CourseSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = CourseFilter
