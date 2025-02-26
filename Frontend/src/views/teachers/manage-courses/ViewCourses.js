@@ -12,6 +12,9 @@ import {
   CModalHeader,
   CModalTitle,
 } from '@coreui/react'
+import CIcon from '@coreui/icons-react'
+import { cilPencil, cilTrash, cilCloudUpload, cilFolderOpen } from '@coreui/icons'
+
 import api from '../../../services/api'
 import { useNavigate } from 'react-router-dom'
 
@@ -80,40 +83,49 @@ const ViewCourses = () => {
                 <br />
                 <small>Updated at: {new Date(course.updated_at).toLocaleDateString()}</small>
                 <br />
-                <CButton
-                  className="mt-2 me-2"
-                  color="primary"
-                  onClick={() => navigate(`/teachers/manage-courses/${course.id}`)}
-                >
-                  Edit
-                </CButton>
-                <CButton
-                  className="mt-2"
-                  color="danger"
-                  onClick={() => {
-                    setSelectedCourse(course.id)
-                    setVisible(true)
-                  }}
-                >
-                  Delete
-                </CButton>
-                <br />
+                
+                <div className="d-flex flex-column mt-2">
+                  <div className="d-flex justify-content-between mb-2">
+                    <CButton
+                      color="primary"
+                      className="me-2 rounded-pill shadow-sm"
+                      onClick={() => navigate(`/teachers/manage-courses/${course.id}`)}
+                    >
+                      <CIcon icon={cilPencil} className="me-1" />
+                      Edit
+                    </CButton>
+                    <CButton
+                      color="danger"
+                      className="rounded-pill shadow-sm"
+                      onClick={() => {
+                        setSelectedCourse(course.id)
+                        setVisible(true)
+                      }}
+                    >
+                      <CIcon icon={cilTrash} className="me-1" />
+                      Delete
+                    </CButton>
+                  </div>
 
-                <CButton
-                  className="mt-2 me-2"
-                  color="info"
-                  onClick={() => navigate(`/teachers/manage-courses/${course.id}/upload`)}
-                >
-                  Upload Course Materials
-                </CButton>
-                <CButton
-                  className="mt-2 me-2"
-                  color="success"
-                  onClick={() => navigate(`/teachers/manage-courses/${course.id}/materials`)}
-                >
-                  View Course Materials
-                </CButton>
-
+                  <div className="d-flex justify-content-between">
+                    <CButton
+                      color="info"
+                      className="me-2 rounded-pill shadow-sm"
+                      onClick={() => navigate(`/teachers/manage-courses/${course.id}/upload`)}
+                    >
+                      <CIcon icon={cilCloudUpload} className="me-1" />
+                      Upload Materials
+                    </CButton>
+                    <CButton
+                      color="success"
+                      className="rounded-pill shadow-sm"
+                      onClick={() => navigate(`/teachers/manage-courses/${course.id}/materials`)}
+                    >
+                      <CIcon icon={cilFolderOpen} className="me-1" />
+                      View Materials
+                    </CButton>
+                  </div>
+                </div>
                 <CModal
                   visible={visible}
                   onClose={() => setVisible(false)}

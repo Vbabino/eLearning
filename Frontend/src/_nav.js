@@ -38,11 +38,7 @@ const _nav = [
         name: 'Manage Courses',
         to: '/teachers/manage-courses',
       },
-      {
-        component: CNavItem,
-        name: 'View Course Materials',
-        to: '/base/accordion',
-      },
+      
       
       {
         component: CNavItem,
