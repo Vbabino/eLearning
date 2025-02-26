@@ -2,19 +2,17 @@ import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { CCard, CCardBody, CCardHeader, CButton } from '@coreui/react'
 import api from '../../../services/api'
-import { USER_TYPE, ID } from '../../../constants'
 
 const CourseDetails = () => {
   const { id } = useParams()
   const [course, setCourse] = useState(null)
   const [isEnrolled, setIsEnrolled] = useState(false)
-  const userType = localStorage.getItem(USER_TYPE)
+  const userType = localStorage.getItem('user_type')
 
   useEffect(() => {
     api
       .get(`/api/courses/${id}/`)
       .then((response) => {
-        console.log('Course data:', response.data)
         setCourse(response.data)
         setIsEnrolled(response.data.is_enrolled)
       })
@@ -29,11 +27,10 @@ const CourseDetails = () => {
       return
     }
     const enrollmentData = {
-      student: localStorage.getItem(ID),
+      student: localStorage.getItem("id"),
       course: id,
       is_active: true,
     }
-    console.log('Enrollment data:', enrollmentData)
     api
       .post(`/api/courses/${id}/enroll/`, enrollmentData)
       .then((response) => {

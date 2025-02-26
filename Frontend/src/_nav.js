@@ -36,18 +36,14 @@ const _nav = [
       {
         component: CNavItem,
         name: 'Manage Courses',
-        to: '/base/accordion',
+        to: '/teachers/manage-courses',
       },
       {
         component: CNavItem,
         name: 'View Course Materials',
         to: '/base/accordion',
       },
-      {
-        component: CNavItem,
-        name: 'Upload Materials',
-        to: '/base/accordion',
-      },
+      
       {
         component: CNavItem,
         name: 'Manage Students',

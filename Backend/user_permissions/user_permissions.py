@@ -12,7 +12,7 @@ class IsTeacher(BasePermission):
         if request.method in SAFE_METHODS:
             return True
 
-        return obj.course.teacher == request.user
+        return obj.teacher == request.user
 
 
 class IsStudent(BasePermission):

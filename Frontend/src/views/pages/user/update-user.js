@@ -8,10 +8,9 @@ import {
 } from '@coreui/react'
 import { useNavigate } from 'react-router-dom'
 import api from '../../../services/api'
-import { ID } from '../../../constants'
 
 const UpdateUser = () => {
-  const id = localStorage.getItem(ID)
+  const id = localStorage.getItem('id')
   const [formData, setFormData] = useState({ first_name: '', last_name: '', email: '' })
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()

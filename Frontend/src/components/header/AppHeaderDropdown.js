@@ -17,7 +17,7 @@ import CIcon from '@coreui/icons-react'
 import nopic from '../../assets/images/avatars/nopic-50.png'
 
 const AppHeaderDropdown = () => {
-  const id = localStorage.getItem(ID)
+  const id = localStorage.getItem('id')
   const profileUpdated = localStorage.getItem('profileUpdated')
   const [profilePic, setProfilePic] = useState()
   const navigate = useNavigate()

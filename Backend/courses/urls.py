@@ -8,17 +8,23 @@ urlpatterns = [
         "<int:pk>/", views.CourseDetailViewForStudents.as_view(), name="course-detail"
     ),
     path("course/search/", views.SearchCourseView.as_view(), name="course-search"),
-
     # Manage courses
     # path("<int:pk>/", views.CourseDetailView.as_view(), name="course-detail"),
     path("<int:pk>/update/", views.CourseUpdateView.as_view(), name="course-update"),
     path("<int:pk>/delete/", views.CourseDeleteView.as_view(), name="course-delete"),
     path("<int:pk>/enroll/", views.CourseEnrollView.as_view(), name="course-enroll"),
+    # Course materials
     path(
         "<int:pk>/materials/",
         views.CourseMaterialUploadView.as_view(),
         name="course-materials",
     ),
+    path(
+        "materials/<int:pk>/",
+        views.CourseMaterialListView.as_view(),
+        name="course-materials",
+    ),
+    # Enrrolled students
     path(
         "teacher/students/",
         views.TeacherEnrolledStudentsView.as_view(),

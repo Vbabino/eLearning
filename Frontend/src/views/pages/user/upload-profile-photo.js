@@ -2,10 +2,9 @@ import React, { useState } from 'react'
 import { CButton, CForm, CFormInput } from '@coreui/react'
 import { useNavigate } from 'react-router-dom'
 import api from '../../../services/api'
-import { ID } from '../../../constants'
 
 const UploadProfilePhoto = () => {
-  const id = localStorage.getItem(ID)
+  const id = localStorage.getItem('id')
   const [formData, setFormData] = useState({ photo: '' })
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()

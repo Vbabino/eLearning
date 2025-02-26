@@ -18,10 +18,16 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 
 class CourseListView(generics.ListCreateAPIView):
-    """Teachers can create courses, students can only view courses."""
+    """Teachers can create and view their own courses."""
 
-    queryset = Course.objects.all()
     serializer_class = CourseSerializer
+
+    def get_queryset(self):
+        """Return courses owned by the authenticated teacher."""
+        user = self.request.user
+        if user.user_type == "teacher":
+            return Course.objects.filter(teacher=user)
+        return Course.objects.none()
 
     def get_permissions(self):
         if self.request.method == "POST":
@@ -73,7 +79,7 @@ class CourseDetailViewForStudents(generics.RetrieveAPIView):
 
 
 class CourseUpdateView(generics.RetrieveUpdateAPIView):
-    """Only the teacher who created the course can update it."""
+    """Only the teacher who created the course can view or update it."""
 
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
@@ -133,9 +139,9 @@ class CourseMaterialUploadView(generics.CreateAPIView):
     permission_classes = [IsTeacher]
 
     def perform_create(self, serializer):
-        """ Ensure course exists and notify students."""
+        """Ensure course exists and notify students."""
         material = serializer.save()
-        
+
         enrolled_students = Enrollment.objects.filter(
             course=material.course
         ).values_list("student__id", flat=True)
@@ -145,6 +151,32 @@ class CourseMaterialUploadView(generics.CreateAPIView):
             teacher_name=self.request.user.email,
             student_ids=list(enrolled_students),
         )
+
+
+class CourseMaterialListView(generics.ListAPIView):
+    """Teachers and enrolled students can view course materials."""
+
+    serializer_class = CourseMaterialSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        """Return materials for the specified course based on user type."""
+        user = self.request.user
+        course_id = self.kwargs.get("pk")
+
+        if user.user_type == "teacher":
+            return CourseMaterial.objects.filter(
+                course__teacher=user, course__id=course_id
+            )
+
+        if user.user_type == "student":
+            return CourseMaterial.objects.filter(
+                course__id=course_id,
+                course__enrollments__student=user,
+                course__enrollments__is_active=True,
+            )
+
+        return CourseMaterial.objects.none()
 
 
 class TeacherEnrolledStudentsView(generics.ListAPIView):
@@ -225,8 +257,10 @@ class UnblockStudentView(generics.UpdateAPIView):
             {"message": "Student unblocked from course."}, status=status.HTTP_200_OK
         )
 
+
 class SearchCourseView(generics.ListAPIView):
     """Users can search for courses."""
+
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
     permission_classes = [permissions.IsAuthenticated]

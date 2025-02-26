@@ -2,10 +2,9 @@ import React, { useEffect, useState } from 'react'
 import { CCard, CCardBody, CCardHeader, CSpinner, CButton } from '@coreui/react'
 import { useNavigate } from 'react-router-dom'
 import api from '../../../services/api'
-import { ID } from '../../../constants'
 
 const ViewUser = () => {
-  const id = localStorage.getItem(ID)
+  const id = localStorage.getItem('id')
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
   const navigate = useNavigate()
