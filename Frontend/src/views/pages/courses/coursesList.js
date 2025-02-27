@@ -61,7 +61,15 @@ const CoursesList = () => {
             <CCard>
               <CCardHeader>{course.title}</CCardHeader>
               <CCardBody>
-                <p>{course.description}</p>
+                <p
+                  style={{
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                  }}
+                >
+                  {course.description}
+                </p>
                 <small>Created at: {new Date(course.created_at).toLocaleDateString()}</small>
                 <br />
                 <small>Updated at: {new Date(course.updated_at).toLocaleDateString()}</small>

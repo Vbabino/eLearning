@@ -28,6 +28,16 @@ class CourseListView(generics.ListCreateAPIView):
         if user.user_type == "teacher":
             return Course.objects.filter(teacher=user)
         return Course.objects.none()
+    
+    def list(self, request, *args, **kwargs):
+        """Return a custom response when no courses are found."""
+        queryset = self.get_queryset()
+        if not queryset.exists():
+            return Response(
+                {"message": "You have not created any courses."},
+                status=status.HTTP_200_OK,
+            )
+        return super().list(request, *args, **kwargs)
 
     def get_permissions(self):
         if self.request.method == "POST":
@@ -38,44 +48,36 @@ class CourseListView(generics.ListCreateAPIView):
         serializer.save(teacher=self.request.user)
 
 
+class CourseListViewForStudents(generics.ListAPIView):
+    """Students can view the courses they are enrolled in."""
+
+    serializer_class = CourseSerializer
+    permission_classes = [IsStudent]
+
+    def get_queryset(self):
+        """Return courses the authenticated student is enrolled in."""
+        user = self.request.user
+        return Course.objects.filter(
+            enrolled_students__student=user, enrolled_students__is_active=True
+        )
+
+    def list(self, request, *args, **kwargs):
+        """Return a custom response when no enrollments are found."""
+        queryset = self.get_queryset()
+        if not queryset.exists():
+            return Response(
+                {"message": "You are not enrolled in any courses."},
+                status=status.HTTP_200_OK,
+            )
+        return super().list(request, *args, **kwargs)
+
+
 class CourseDetailViewForStudents(generics.RetrieveAPIView):
     """Students can view details of a course."""
 
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
     permission_classes = [permissions.IsAuthenticated]
-
-
-# TODO: Fix the issue with the course list view
-# class CourseDetailView(generics.RetrieveAPIView):
-#     """Teachers and Students can view details of a course.
-
-#     This view allows authenticated users to retrieve details of a specific course.
-#     The view uses the `CourseSerializer` to serialize the course data and ensures
-#     that only authenticated users can access it by using the `IsAuthenticated`
-#     permission class.
-
-#     The `get_queryset` method customizes the queryset based on the type of user:
-#     - If the user is a teacher, it returns all courses taught by that teacher.
-#     - If the user is a student, it returns only the courses in which the student
-#       is actively enrolled.
-
-#     Methods:
-#     - get_queryset(self): Returns a queryset of courses based on the user's type
-#       and enrollment status.
-#     """
-
-#     serializer_class = CourseSerializer
-#     permission_classes = [permissions.IsAuthenticated]
-
-#     def get_queryset(self):
-#         """Ensure only active students can access course details."""
-#         user = self.request.user
-#         if user.user_type == "teacher":
-#             return Course.objects.all().filter(teacher=user)
-#         return Course.objects.filter(
-#             enrollments__student=user, enrollments__is_active=True
-#         )
 
 
 class CourseUpdateView(generics.RetrieveUpdateAPIView):
@@ -172,8 +174,8 @@ class CourseMaterialListView(generics.ListAPIView):
         if user.user_type == "student":
             return CourseMaterial.objects.filter(
                 course__id=course_id,
-                course__enrollments__student=user,
-                course__enrollments__is_active=True,
+                course__enrolled_students__student=user,
+                course__enrolled_students__is_active=True
             )
 
         return CourseMaterial.objects.none()

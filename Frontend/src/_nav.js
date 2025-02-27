@@ -38,8 +38,7 @@ const _nav = [
         name: 'Manage Courses',
         to: '/teachers/manage-courses',
       },
-      
-      
+
       {
         component: CNavItem,
         name: 'Manage Students',
@@ -60,7 +59,7 @@ const _nav = [
       {
         component: CNavItem,
         name: 'In Progress',
-        to: '/base/accordion',
+        to: '/students/enrolled-courses',
       },
       {
         component: CNavItem,

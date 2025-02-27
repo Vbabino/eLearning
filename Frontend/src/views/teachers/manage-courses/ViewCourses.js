@@ -55,12 +55,12 @@ const ViewCourses = () => {
     return <div>Access Denied</div>
   }
 
-  if (courses.length === 0) {
+  if (courses.message) {
     return (
       <div className="text-right">
         <CCard>
           <CCardBody>
-            <h4>You have not yet created any courses.</h4>
+            <h4>{courses.message}</h4>
             <CButton color="primary" onClick={() => navigate('/teachers/manage-courses/create')}>
               Create Course
             </CButton>
@@ -78,12 +78,20 @@ const ViewCourses = () => {
             <CCard>
               <CCardHeader>{course.title}</CCardHeader>
               <CCardBody>
-                <p>{course.description}</p>
+                <p
+                  style={{
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                  }}
+                >
+                  {course.description}
+                </p>
                 <small>Created at: {new Date(course.created_at).toLocaleDateString()}</small>
                 <br />
                 <small>Updated at: {new Date(course.updated_at).toLocaleDateString()}</small>
                 <br />
-                
+
                 <div className="d-flex flex-column mt-2">
                   <div className="d-flex justify-content-between mb-2">
                     <CButton
