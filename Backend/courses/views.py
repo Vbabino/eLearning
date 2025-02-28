@@ -11,11 +11,11 @@ from notifications.tasks import (
     notify_teacher_on_enrollment,
     notify_students_on_material_upload,
 )
-
 from user_permissions.user_permissions import IsTeacher, IsStudent
 from courses.filters import CourseFilter
 from django_filters.rest_framework import DjangoFilterBackend
 
+from django.db.models import Count
 
 class CourseListView(generics.ListCreateAPIView):
     """Teachers can create and view their own courses."""
@@ -28,7 +28,7 @@ class CourseListView(generics.ListCreateAPIView):
         if user.user_type == "teacher":
             return Course.objects.filter(teacher=user)
         return Course.objects.none()
-    
+
     def list(self, request, *args, **kwargs):
         """Return a custom response when no courses are found."""
         queryset = self.get_queryset()
@@ -175,7 +175,7 @@ class CourseMaterialListView(generics.ListAPIView):
             return CourseMaterial.objects.filter(
                 course__id=course_id,
                 course__enrolled_students__student=user,
-                course__enrolled_students__is_active=True
+                course__enrolled_students__is_active=True,
             )
 
         return CourseMaterial.objects.none()
@@ -183,6 +183,9 @@ class CourseMaterialListView(generics.ListAPIView):
 
 class TeacherEnrolledStudentsView(generics.ListAPIView):
     """Teachers can view students enrolled in their course."""
+
+    serializer_class = EnrollmentSerializer
+    permission_classes = [IsTeacher]
 
     def get_queryset(self):
         """Ensure only authenticated teachers can fetch enrolled students."""

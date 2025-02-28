@@ -1,4 +1,6 @@
 from rest_framework.permissions import BasePermission, SAFE_METHODS
+from courses.models import Course, Enrollment
+
 
 class IsTeacher(BasePermission):
     message = (
@@ -12,7 +14,15 @@ class IsTeacher(BasePermission):
         if request.method in SAFE_METHODS:
             return True
 
-        return obj.teacher == request.user
+        # If the object is a Course, check obj.teacher
+        if isinstance(obj, Course):
+            return obj.teacher == request.user
+
+        # If the object is an Enrollment, check obj.course.teacher
+        if isinstance(obj, Enrollment):
+            return obj.course.teacher == request.user
+
+        return False
 
 
 class IsStudent(BasePermission):

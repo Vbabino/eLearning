@@ -42,7 +42,7 @@ const _nav = [
       {
         component: CNavItem,
         name: 'Manage Students',
-        to: '/base/accordion',
+        to: '/teachers/manage-students',
       },
     ],
   },

@@ -15,6 +15,7 @@ const EditCourseDetails = React.lazy(() => import('./views/teachers/manage-cours
 const CreateCourse = React.lazy(() => import('./views/teachers/manage-courses/CreateCourse'))
 const UploadCourseMaterials = React.lazy(() => import('./views/teachers/manage-courses/UploadCourseMaterials'))
 const CourseMaterials = React.lazy(() => import('./views/teachers/manage-courses/CourseMaterials'))
+const ViewEnrolledStudents = React.lazy(() => import('./views/teachers/manage-students/ViewEnrolledStudents'))
 
 //Students
 const EnrolledCourses = React.lazy(() => import('./views/students/in-progress/EnrolledCourses'))
@@ -50,6 +51,7 @@ const routes = [
   {path: '/teachers/manage-courses/create', name: 'Create Course', element: CreateCourse},
   {path: '/teachers/manage-courses/:id/upload', name: 'Upload Course Materials', element: UploadCourseMaterials},
   {path: '/teachers/manage-courses/:id/materials', name: 'Course Materials', element: CourseMaterials},
+  {path: '/teachers/manage-students/', name: 'Enrolled Students', element: ViewEnrolledStudents},
   
 ]
 

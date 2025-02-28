@@ -19,6 +19,8 @@ class CourseSerializer(serializers.ModelSerializer):
 
 class EnrollmentSerializer(serializers.ModelSerializer):
     is_enrolled = serializers.SerializerMethodField()
+    student_details = serializers.SerializerMethodField()
+    course_title = serializers.SerializerMethodField()
 
     class Meta:
         model = Enrollment
@@ -32,7 +34,20 @@ class EnrollmentSerializer(serializers.ModelSerializer):
             ).exists()
         return False
 
+    def get_student_details(self, obj):
+        return {
+            "email": obj.student.email,
+            "first_name": obj.student.first_name,
+            "last_name": obj.student.last_name,
+        }
+
+    def get_course_title(self, obj):
+        """Return the title of the course the student is enrolled in."""
+        return obj.course.title
+
+
 class CourseMaterialSerializer(serializers.ModelSerializer):
     class Meta:
         model = CourseMaterial
         fields = "__all__"
+

@@ -13,7 +13,7 @@ import {
   CModalTitle,
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
-import { cilPencil, cilTrash, cilCloudUpload, cilFolderOpen } from '@coreui/icons'
+import { cilPencil, cilTrash, cilCloudUpload, cilFolderOpen, cilUser } from '@coreui/icons'
 
 import api from '../../../services/api'
 import { useNavigate } from 'react-router-dom'
@@ -72,6 +72,11 @@ const ViewCourses = () => {
 
   return (
     <div>
+      <div className="text-right mb-4">
+            <CButton color="primary" onClick={() => navigate('/teachers/manage-courses/create')}>
+              Create Course
+            </CButton>
+      </div>
       <CRow className="mb-4">
         {courses.map((course) => (
           <CCol sm="6" lg="4" key={course.id} className="mb-4">
@@ -133,6 +138,7 @@ const ViewCourses = () => {
                       View Materials
                     </CButton>
                   </div>
+                  
                 </div>
                 <CModal
                   visible={visible}
