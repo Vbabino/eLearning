@@ -58,7 +58,7 @@ const AppHeader = () => {
         </CHeaderNav>
         <CHeaderNav className="ms-auto">
           <CNavItem>
-            <CNavLink href="#">
+            <CNavLink to="/notifications/push" as={NavLink}>
               <CIcon icon={cilBell} size="lg" />
             </CNavLink>
           </CNavItem>

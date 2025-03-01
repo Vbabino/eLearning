@@ -6,5 +6,5 @@ urlpatterns = [
     path("feedback/", include("feedback.urls")),
     # path("chat/", include("chat.urls")),
     # path("whiteboard/", include("whiteboard.urls")),
-    # path("notifications/", include("notifications.urls")),
+    path("notifications/", include("notifications.urls")),
 ]

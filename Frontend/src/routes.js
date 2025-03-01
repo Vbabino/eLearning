@@ -27,6 +27,9 @@ const CoursesList = React.lazy(() => import('./views/pages/courses/coursesList')
 const CourseDetails = React.lazy(() => import('./views/pages/courses/courseDetails'))
 const ViewCourseFeedback = React.lazy(() => import('./views/pages/courses/ViewCourseFeedback'))
 
+// Notifications
+const PushNotifications = React.lazy(() => import('./views/notifications/pushNotifications/PushNotifications'))
+
 const routes = [
   // Default route
   { path: '/', exact: true, name: 'Home' },
@@ -56,6 +59,9 @@ const routes = [
   {path: '/teachers/manage-courses/:id/upload', name: 'Upload Course Materials', element: UploadCourseMaterials},
   {path: '/teachers/manage-courses/:id/materials', name: 'Course Materials', element: CourseMaterials},
   {path: '/teachers/manage-students/', name: 'Enrolled Students', element: ViewEnrolledStudents},
+
+  // Notifications
+  {path: '/notifications/push', name: 'Push Notifications', element: PushNotifications},
   
 ]
 
