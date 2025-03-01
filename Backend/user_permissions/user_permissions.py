@@ -1,6 +1,8 @@
 from rest_framework.permissions import BasePermission, SAFE_METHODS
 from courses.models import Course, Enrollment
+from django.contrib.auth import get_user_model
 
+User = get_user_model()
 
 class IsTeacher(BasePermission):
     message = (

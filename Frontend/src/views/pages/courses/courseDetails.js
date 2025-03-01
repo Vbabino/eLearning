@@ -34,10 +34,11 @@ const CourseDetails = () => {
       return
     }
     const enrollmentData = {
-      student: localStorage.getItem('id'),
+      student: parseInt(localStorage.getItem('id'), 10),
       course: id,
       is_active: true,
     }
+    console.log('Enrollment Data:', enrollmentData)
     api
       .post(`/api/courses/${id}/enroll/`, enrollmentData)
       .then((response) => {
