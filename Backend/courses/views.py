@@ -15,7 +15,6 @@ from user_permissions.user_permissions import IsTeacher, IsStudent
 from courses.filters import CourseFilter
 from django_filters.rest_framework import DjangoFilterBackend
 
-from django.db.models import Count
 
 class CourseListView(generics.ListCreateAPIView):
     """Teachers can create and view their own courses."""

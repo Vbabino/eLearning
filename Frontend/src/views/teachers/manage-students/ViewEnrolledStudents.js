@@ -17,8 +17,6 @@ import api from '../../../services/api'
 
 const ViewEnrolledStudents = () => {
   const [students, setStudents] = useState({})
-  const [isRemoved, setIsRemoved] = useState(false)
-  const [isUnblocked, setIsUnblocked] = useState(false)
 
   useEffect(() => {
     api
@@ -48,8 +46,6 @@ const ViewEnrolledStudents = () => {
     api
       .put(`/api/courses/${courseId}/remove_student/${enrollmentId}/`, data)
       .then(() => {
-        setIsRemoved(true)
-        setIsUnblocked(false)
         alert('Student removed successfully')
       })
       .catch((error) => {
@@ -63,8 +59,6 @@ const ViewEnrolledStudents = () => {
     api
       .put(`/api/courses/${courseId}/unblock_student/${enrollmentId}/`, data)
       .then(() => {
-        setIsUnblocked(true)
-        setIsRemoved(false)
         alert('Student unblocked successfully')
       })
       .catch((error) => {
@@ -104,7 +98,6 @@ const ViewEnrolledStudents = () => {
                         onClick={() =>
                           handleRemoveStudent(student.id, student.course, student.student)
                         }
-                        disabled={isRemoved}
                       >
                         <CIcon icon={cilXCircle} />
                         Remove
@@ -115,7 +108,6 @@ const ViewEnrolledStudents = () => {
                         onClick={() =>
                           handleUnblockStudent(student.id, student.course, student.student)
                         }
-                        disabled={isUnblocked}
                       >
                         <CIcon icon={cilCheck} />
                         Unblock

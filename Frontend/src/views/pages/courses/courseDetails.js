@@ -2,12 +2,18 @@ import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { CCard, CCardBody, CCardHeader, CButton } from '@coreui/react'
 import api from '../../../services/api'
+import CIcon from '@coreui/icons-react'
+import { cilFolderOpen } from '@coreui/icons'
+import { useNavigate } from 'react-router-dom'
+
 
 const CourseDetails = () => {
   const { id } = useParams()
   const [course, setCourse] = useState(null)
   const [isEnrolled, setIsEnrolled] = useState(false)
+  const [feedbackId, setFeedbackId] = useState(null)
   const userType = localStorage.getItem('user_type')
+  const navigate = useNavigate()
 
   useEffect(() => {
     api
@@ -15,6 +21,7 @@ const CourseDetails = () => {
       .then((response) => {
         setCourse(response.data)
         setIsEnrolled(response.data.is_enrolled)
+        setFeedbackId(response.data.feedback_id)
       })
       .catch((error) => {
         console.error('There was an error fetching the course data!', error)
@@ -27,7 +34,7 @@ const CourseDetails = () => {
       return
     }
     const enrollmentData = {
-      student: localStorage.getItem("id"),
+      student: localStorage.getItem('id'),
       course: id,
       is_active: true,
     }
@@ -67,6 +74,15 @@ const CourseDetails = () => {
           disabled={isEnrolled || userType !== 'student'}
         >
           {isEnrolled ? 'Already Enrolled' : 'Enroll'}
+        </CButton>
+
+        <CButton
+          color="warning"
+          className=" shadow-sm ms-2"
+          onClick={() => navigate(`/courses/${course.id}/feedback`)}
+        >
+          <CIcon icon={cilFolderOpen} className="me-1" />
+          View feedback
         </CButton>
       </CCardBody>
     </CCard>

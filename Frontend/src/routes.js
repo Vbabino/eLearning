@@ -20,10 +20,12 @@ const ViewEnrolledStudents = React.lazy(() => import('./views/teachers/manage-st
 //Students
 const EnrolledCourses = React.lazy(() => import('./views/students/in-progress/EnrolledCourses'))
 const ViewCourseMaterials = React.lazy(() => import('./views/students/in-progress/ViewCourseMaterials'))
+const FeedbackView = React.lazy(() => import('./views/students/in-progress/FeedbackView'))
 
 // Courses
 const CoursesList = React.lazy(() => import('./views/pages/courses/coursesList'))
 const CourseDetails = React.lazy(() => import('./views/pages/courses/courseDetails'))
+const ViewCourseFeedback = React.lazy(() => import('./views/pages/courses/ViewCourseFeedback'))
 
 const routes = [
   // Default route
@@ -40,10 +42,12 @@ const routes = [
   // Courses routes
   { path: '/courses/list', name: 'Courses List', element: CoursesList },
   {path: '/courses/:id', name: 'Course Details', element: CourseDetails},
+  {path: '/courses/:id/feedback', name: 'Course Feedback', element: ViewCourseFeedback},
   
   // Student routes
   {path: '/students/enrolled-courses', name: 'Enrolled Courses', element: EnrolledCourses},
   {path: '/students/enrolled-courses-materials/:id', name: 'Course Materials', element: ViewCourseMaterials},
+  {path: '/students/enrolled-courses-feedback/:id/', name: 'Feedback', element: FeedbackView},
 
   // Teacher routes
   { path: '/teachers/manage-courses', name: 'Manage Courses', element: ViewCourses },

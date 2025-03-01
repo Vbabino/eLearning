@@ -1,5 +1,13 @@
 import React, { useEffect, useState } from 'react'
-import { CCard, CCardBody, CCardHeader, CCol, CRow, CFormInput, CFormSelect } from '@coreui/react'
+import {
+  CCard,
+  CCardBody,
+  CCardHeader,
+  CCol,
+  CRow,
+  CFormInput,
+  CFormSelect,
+} from '@coreui/react'
 import { useNavigate } from 'react-router-dom'
 
 
@@ -73,6 +81,7 @@ const CoursesList = () => {
                 <small>Created at: {new Date(course.created_at).toLocaleDateString()}</small>
                 <br />
                 <small>Updated at: {new Date(course.updated_at).toLocaleDateString()}</small>
+                
               </CCardBody>
             </CCard>
           </CCol>

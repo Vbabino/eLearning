@@ -39,14 +39,7 @@ const EnrolledCourses = () => {
   return (
     <CRow className="mb-4">
       {courses.map((course) => (
-        <CCol
-          xs="12"
-          sm="6"
-          md="4"
-          key={course.id}
-          className="mb-4"
-          style={{ cursor: 'pointer' }}
-        >
+        <CCol xs="12" sm="6" md="4" key={course.id} className="mb-4" style={{ cursor: 'pointer' }}>
           <CCard>
             <CCardHeader>{course.title}</CCardHeader>
             <CCardBody>
@@ -66,12 +59,19 @@ const EnrolledCourses = () => {
               <CButton
                 color="success"
                 className="rounded-pill shadow-sm mt-2"
-                onClick={() =>
-                  navigate(`/students/enrolled-courses-materials/${course.id}/`)
-                }
+                onClick={() => navigate(`/students/enrolled-courses-materials/${course.id}/`)}
               >
                 <CIcon icon={cilFolderOpen} className="me-1" />
                 View Materials
+              </CButton>
+              <br />
+              <CButton
+                color="warning"
+                className="rounded-pill shadow-sm mt-2"
+                onClick={() => navigate(`/students/enrolled-courses-feedback/${course.id}/`)}
+              >
+                <CIcon icon={cilFolderOpen} className="me-1" />
+                Leave feedback
               </CButton>
             </CCardBody>
           </CCard>
