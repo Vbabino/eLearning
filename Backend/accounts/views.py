@@ -52,11 +52,14 @@ class UserSearchView(generics.ListAPIView):
 
 
 class UserDetailView(generics.RetrieveUpdateAPIView):
+    """Get and update user profile"""
 
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
+        if self.request.method == 'GET':
+            return CustomUser.objects.all()
         return CustomUser.objects.filter(id=self.request.user.id)
 
     def perform_update(self, serializer):

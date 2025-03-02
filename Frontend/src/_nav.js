@@ -61,16 +61,6 @@ const _nav = [
         name: 'In Progress',
         to: '/students/enrolled-courses',
       },
-      {
-        component: CNavItem,
-        name: 'Your Updates',
-        to: '/base/accordion',
-      },
-      {
-        component: CNavItem,
-        name: 'Your Feedback',
-        to: '/base/accordion',
-      },
     ],
   },
   {
@@ -84,8 +74,8 @@ const _nav = [
     items: [
       {
         component: CNavItem,
-        name: 'Whiteboard',
-        to: '/whiteboard',
+        name: 'Chat',
+        to: '/chat',
       },
     ],
   },

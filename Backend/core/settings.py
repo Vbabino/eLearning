@@ -57,7 +57,6 @@ INSTALLED_APPS = [
     "chat",
     "feedback",
     "notifications",
-    "whiteboard",
     "corsheaders",
 ]
 

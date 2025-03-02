@@ -30,6 +30,9 @@ const ViewCourseFeedback = React.lazy(() => import('./views/pages/courses/ViewCo
 // Notifications
 const PushNotifications = React.lazy(() => import('./views/notifications/pushNotifications/PushNotifications'))
 
+// Chat
+const Chat = React.lazy(() => import('./views/chat/Chat'))
+
 const routes = [
   // Default route
   { path: '/', exact: true, name: 'Home' },
@@ -62,6 +65,9 @@ const routes = [
 
   // Notifications
   {path: '/notifications/push', name: 'Push Notifications', element: PushNotifications},
+
+  // Chat
+  {path: '/chat', name: 'Chat', element: Chat},
   
 ]
 
