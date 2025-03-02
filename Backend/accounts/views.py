@@ -7,6 +7,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
 from drf_spectacular.utils import extend_schema
 from accounts.filters import CustomUserFilter
+from notifications.tasks import notify_student_on_profile_update
 
 
 class RegisterView(generics.CreateAPIView):
@@ -51,9 +52,16 @@ class UserSearchView(generics.ListAPIView):
 
 
 class UserDetailView(generics.RetrieveUpdateAPIView):
-    queryset = CustomUser.objects.all()
+
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return CustomUser.objects.filter(id=self.request.user.id)
+
+    def perform_update(self, serializer):
+        instance = serializer.save()
+        notify_student_on_profile_update.delay(instance.id)
 
 
 class UploadProfilePhotoView(generics.UpdateAPIView):
@@ -65,14 +73,13 @@ class UploadProfilePhotoView(generics.UpdateAPIView):
 
     def perform_update(self, serializer):
         serializer.save(photo=self.request.FILES.get("photo"))
+        notify_student_on_profile_update.delay(self.request.user.id)
 
 
 class GetProfilePhotoView(generics.RetrieveAPIView):
     queryset = CustomUser.objects.all() 
     serializer_class = UserProfilePhotoSerializer
     permission_classes = [IsAuthenticated]
-
-    
 
 
 class RequestPasswordResetView(generics.GenericAPIView):

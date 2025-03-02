@@ -39,3 +39,20 @@ def notify_students_on_material_upload(course_id, teacher_name, student_ids):
             f"notifications_{student_id}",
             {"type": "send_notification", "message": message},
         )
+
+
+@shared_task
+def notify_student_on_profile_update(student_id):
+    try:
+        student = CustomUser.objects.get(id=student_id)
+        Notification.objects.create(
+            user=student, content="Your profile has been updated.", created_at=now()
+        )
+
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+            f"notifications_{student_id}",
+            {"type": "send_notification", "message": "Your profile has been updated."},
+        )
+    except CustomUser.DoesNotExist:
+        print(f"User {student_id} not found. Skipping notification.")
