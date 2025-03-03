@@ -1,3 +1,4 @@
+import re
 from rest_framework import serializers
 from courses.models import Course, Enrollment, CourseMaterial
 
@@ -51,3 +52,33 @@ class CourseMaterialSerializer(serializers.ModelSerializer):
     class Meta:
         model = CourseMaterial
         fields = "__all__"
+
+        def validate_file_name(self, value):
+            """Ensure file_name only contains safe characters."""
+            if not re.match(r'^[a-zA-Z0-9_\- ]+$', value):
+                raise serializers.ValidationError(
+                    "File name contains invalid characters. Only letters, numbers, spaces, underscores, and hyphens are allowed."
+                )
+            return value
+
+        def validate_description(self, value):
+            """Ensure description doesn't contain dangerous characters."""
+            if not re.match(r'^[a-zA-Z0-9 .,!?()\'"-]+$', value):
+                raise serializers.ValidationError(
+                    "Description contains invalid characters."
+                )
+            return value
+
+        def validate_file_min_length(self, value):
+            """Ensure file_name is at least 5 characters long."""
+            if not (5 <= len(value) <= 50):
+                raise serializers.ValidationError("File name must be between 5 and 50 characters long.")
+            return value
+
+        def validate_description_min_length(self, value):   
+            """Ensure description is between 5 and 100 characters."""
+            if not (5 <= len(value) <= 100):
+                raise serializers.ValidationError(
+                    "Description must be between 5 and 100 characters long."
+                )
+            return value
