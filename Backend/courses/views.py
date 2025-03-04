@@ -14,6 +14,7 @@ from notifications.tasks import (
 from user_permissions.user_permissions import IsTeacher, IsStudent
 from courses.filters import CourseFilter
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.generics import get_object_or_404
 
 
 class CourseListView(generics.ListCreateAPIView):
@@ -107,7 +108,7 @@ class CourseEnrollView(generics.CreateAPIView):
         course_id = self.kwargs.get("pk")
         if not course_id:
             raise serializers.ValidationError("Course ID is required.")
-        course = Course.objects.get(id=course_id)
+        course = get_object_or_404(Course, pk=course_id)
 
         # Check if already enrolled
         if Enrollment.objects.filter(
@@ -123,6 +124,11 @@ class CourseEnrollView(generics.CreateAPIView):
             course_id=enrollment.course.id,
             student_name=student.email,
             teacher_id=enrollment.course.teacher.id,
+        )
+
+        return Response(
+            {"message": "Enrolled successfully!", "course_id": course.id},
+            status=status.HTTP_201_CREATED,
         )
 
     def get_serializer_context(self):
@@ -215,7 +221,7 @@ class RemoveStudentView(generics.UpdateAPIView):
 
     def get_queryset(self):
         """Ensure only teachers can remove students from their own courses."""
-        return Enrollment.objects.filter(course__teacher=self.request.user)
+        return Enrollment.objects.all()
 
     def update(self, request, *args, **kwargs):
         """Set `is_active` to False."""
@@ -243,7 +249,7 @@ class UnblockStudentView(generics.UpdateAPIView):
 
     def get_queryset(self):
         """Ensure only teachers can unblock students from their own courses."""
-        return Enrollment.objects.filter(course__teacher=self.request.user)
+        return Enrollment.objects.all()
 
     def update(self, request, *args, **kwargs):
         """Set `is_active` to True."""

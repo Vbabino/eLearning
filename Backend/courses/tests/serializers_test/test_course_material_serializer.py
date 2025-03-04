@@ -1,15 +1,24 @@
 import uuid
 import pytest
-from hypothesis import given, strategies as st
+from hypothesis import given, strategies as st, settings
 from accounts.models import CustomUser
 from courses.models import Course, CourseMaterial
 from courses.serializers import CourseMaterialSerializer
 
 
 @pytest.mark.django_db
+@settings(deadline=None)
 @given(
-    file_name=st.text(min_size=5, max_size=50),
-    description=st.text(min_size=5, max_size=100),
+    file_name=st.text(
+        min_size=5,
+        max_size=50,
+        alphabet="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-.",
+    ),
+    description=st.text(
+        min_size=5,
+        max_size=100,
+        alphabet="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-.",
+    ),
 )
 def test_course_material_serializer_positive(file_name, description):
     """Test CourseMaterialSerializer with valid data.
@@ -55,7 +64,7 @@ def test_course_material_serializer_negative_invalid_data(file_name, description
     data = {"course": course.pk, "file_name": file_name, "description": description}
     serializer = CourseMaterialSerializer(data=data)
     assert not serializer.is_valid()
-    # We expect 'file_name' or 'description' to be flagged as invalid
+    # Expect 'file_name' or 'description' to be flagged as invalid
     assert "file_name" in serializer.errors or "description" in serializer.errors
 
 

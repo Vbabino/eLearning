@@ -21,12 +21,12 @@ urlpatterns = [
     path(
         "<int:pk>/materials/",
         views.CourseMaterialUploadView.as_view(),
-        name="course-materials",
+        name="course-material-upload",
     ),
     path(
         "materials/<int:pk>/",
         views.CourseMaterialListView.as_view(),
-        name="course-materials",
+        name="course-material-list",
     ),
     # Enrrolled students
     path(

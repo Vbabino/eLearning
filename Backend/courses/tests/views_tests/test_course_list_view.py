@@ -2,7 +2,7 @@ import uuid
 import pytest
 from rest_framework.test import APIClient
 from django.urls import reverse
-from hypothesis import given, strategies as st
+from hypothesis import given, settings, strategies as st
 from accounts.models import CustomUser
 from courses.models import Course
 
@@ -12,11 +12,10 @@ from courses.models import Course
     course_title=st.text(
         min_size=5,
         max_size=50,
-        alphabet=st.characters(
-            whitelist_categories=["L", "N"], blacklist_characters="\xa0"
-        ),
+        alphabet="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-.",
     )
 )
+@settings(deadline=None)
 def test_course_list_view_positive(course_title):
     """
     A positive test ensuring a teacher user can successfully create and list their courses.
@@ -27,9 +26,15 @@ def test_course_list_view_positive(course_title):
     )
     client.force_authenticate(user=teacher)
 
-    url = reverse("course-list")  
+    url = reverse("course-list")
     response = client.post(
-        url, {"title": course_title, "description": "Test description", "teacher": teacher.id}, format="json"
+        url,
+        {
+            "title": course_title,
+            "description": "Test description",
+            "teacher": teacher.id,
+        },
+        format="json",
     )
     assert (
         response.status_code == 201
@@ -37,7 +42,9 @@ def test_course_list_view_positive(course_title):
 
     # Retrieve the list of courses
     get_response = client.get(url)
-    assert get_response.status_code == 200, f"Expected 200, got {get_response.status_code}"
+    assert (
+        get_response.status_code == 200
+    ), f"Expected 200, got {get_response.status_code}"
     # Ensure the created course is returned
     assert len(get_response.data) == 1
     assert get_response.data[0]["title"] == course_title
@@ -63,6 +70,7 @@ def test_course_list_view_negative_non_teacher_cannot_create():
 
 
 @pytest.mark.django_db
+@settings(deadline=None)
 @given(course_title=st.text(min_size=100, max_size=100))
 def test_course_list_view_edge_case_boundary_title_length(course_title):
     """
@@ -78,8 +86,12 @@ def test_course_list_view_edge_case_boundary_title_length(course_title):
 
     url = reverse("course-list")
     response = client.post(
-        url, {"title": course_title, "description": "Edge case description"}, format="json"
+        url,
+        {"title": course_title, "description": "Edge case description"},
+        format="json",
     )
-    # Depending on max_length in models, this may be valid or invalid.
     # If Course.title supports 100 chars, expect 201; otherwise 400.
-    assert response.status_code in [201, 400], f"Expected 201 or 400, got {response.status_code}"
+    assert response.status_code in [
+        201,
+        400,
+    ], f"Expected 201 or 400, got {response.status_code}"

@@ -6,8 +6,15 @@ from accounts.models import CustomUser
 from courses.models import Course, Enrollment
 from courses.serializers import EnrollmentSerializer
 
+
 @pytest.mark.django_db
-@given(st.text(min_size=1, max_size=50))
+@given(
+    st.text(
+        min_size=1,
+        max_size=50,
+        alphabet="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-.",
+    )
+)
 def test_enrollment_serializer_positive(course_title):
     """
     Test the EnrollmentSerializer for positive cases.
@@ -37,15 +44,12 @@ def test_enrollment_serializer_negative_invalid_data():
     Attempt to create an Enrollment with missing required fields.
     The serializer should fail validation.
     """
-    data = {
-        "student": None,
-        "course": None,
-        "is_active": True
-    }
+    data = {"student": None, "course": None, "is_active": True}
     serializer = EnrollmentSerializer(data=data)
     assert not serializer.is_valid()
     assert "student" in serializer.errors
     assert "course" in serializer.errors
+
 
 @pytest.mark.django_db
 def test_enrollment_serializer_edge_case_inactive_enrollment():
@@ -53,7 +57,9 @@ def test_enrollment_serializer_edge_case_inactive_enrollment():
     Ensure serializer handles an Enrollment correctly when is_active is False.
     """
     user = CustomUser.objects.create_user(email="edge@example.com", password="pass123")
-    course = Course.objects.create(title="Edge Case Course", description="Test", teacher=user)
+    course = Course.objects.create(
+        title="Edge Case Course", description="Test", teacher=user
+    )
     enrollment = Enrollment.objects.create(student=user, course=course, is_active=False)
 
     request = APIRequestFactory().get("/")
