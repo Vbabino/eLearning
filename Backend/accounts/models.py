@@ -41,7 +41,7 @@ class CustomUser(AbstractUser):
 
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
-    photo = models.ImageField(upload_to="profile_pics/", null=True, blank=True)
+    photo = models.FileField(upload_to="profile_pics/", null=True, blank=True)
     user_type = models.CharField(max_length=10, choices=USER_TYPES)
     otp_secret = models.CharField(max_length=32, default=pyotp.random_base32, unique=True)
     is_approved = models.BooleanField(default=False)

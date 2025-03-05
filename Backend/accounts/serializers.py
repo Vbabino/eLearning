@@ -3,8 +3,10 @@ from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from accounts.utils import send_otp_email
 from accounts.models import CustomUser
-from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 import pyotp
+from PIL import Image
+from django.core.exceptions import ValidationError
 
 User = get_user_model()
 
@@ -13,7 +15,24 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = ["id", "email", "first_name", "last_name", "user_type"]
-        read_only_fields = ["id", "email", "user_type"]
+        read_only_fields = ["id"]
+        extra_kwargs = {
+            "email": {"read_only": True},
+            "user_type": {"read_only": True},
+        }
+
+    def validate(self, data):
+
+        errors = {}
+        if "email" in self.initial_data:
+            errors["email"] = "Email cannot be modified."
+        if "user_type" in self.initial_data:
+            errors["user_type"] = "User type cannot be modified."
+
+        if errors:
+            raise serializers.ValidationError(errors)
+
+        return super().validate(data)
 
 
 class UserProfilePhotoSerializer(serializers.ModelSerializer):
@@ -21,7 +40,9 @@ class UserProfilePhotoSerializer(serializers.ModelSerializer):
         model = CustomUser
         fields = ["photo"]
 
-    def validate_profile_photo(self, value):
+    def validate_photo(self, value):
+        """Custom validation to enforce file type and size restrictions."""
+
         allowed_extensions = ["jpg", "jpeg", "png"]
         file_extension = value.name.split(".")[-1].lower()
 
@@ -30,8 +51,17 @@ class UserProfilePhotoSerializer(serializers.ModelSerializer):
                 "Only JPG, JPEG, and PNG files are allowed."
             )
 
+        # Check file size
         if value.size > 5 * 1024 * 1024:
             raise serializers.ValidationError("Profile photo size exceeds 5MB.")
+
+        # Manually check if the file is a valid image
+        try:
+            img = Image.open(value)
+            img.verify()  # This will raise an error if it's not an image
+        except (IOError, ValidationError):
+            raise serializers.ValidationError("Upload a valid image file.")
+
         return value
 
 
@@ -44,6 +74,20 @@ class RegisterSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         user = CustomUser.objects.create_user(**validated_data)
         return user
+
+    def validate_first_name(self, value):
+        if len(value) >= 255:
+            raise serializers.ValidationError(
+                "First name must be at most 255 characters."
+            )
+        return value
+
+    def validate_last_name(self, value):
+        if len(value) >= 255:
+            raise serializers.ValidationError(
+                "Last name must be at most 255 characters."
+            )
+        return value
 
 
 class LoginSerializer(serializers.Serializer):
@@ -71,6 +115,16 @@ class LoginSerializer(serializers.Serializer):
 
 class LogoutSerializer(serializers.Serializer):
     refresh = serializers.CharField()
+
+    def validate_refresh(self, value):
+        """Ensure the provided refresh token is valid and not blacklisted."""
+        try:
+            token = RefreshToken(value)
+            token.check_blacklist()
+        except TokenError:
+            raise serializers.ValidationError("Invalid or expired refresh token.")
+
+        return value
 
 
 class RequestPasswordResetSerializer(serializers.Serializer):
