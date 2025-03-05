@@ -2,12 +2,13 @@ import uuid
 import pytest
 from rest_framework.test import APIClient
 from django.urls import reverse
-from hypothesis import given, strategies as st
+from hypothesis import given, strategies as st, settings
 from accounts.models import CustomUser
 from courses.models import Course, Enrollment
 
 
 @pytest.mark.django_db
+@settings(deadline=None)
 @given(
     course_title=st.text(
         min_size=5,

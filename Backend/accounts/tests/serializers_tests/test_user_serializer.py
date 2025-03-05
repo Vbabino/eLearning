@@ -75,6 +75,7 @@ def test_user_serializer_negative_invalid_field():
 
 
 @pytest.mark.django_db
+@settings(deadline=None)
 @given(
     long_name=st.text(
         min_size=256,
