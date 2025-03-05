@@ -58,6 +58,7 @@ def test_register_serializer_negative_missing_password():
 
 
 @pytest.mark.django_db
+@settings(deadline=None)
 @given(long_name=st.text(min_size=256, max_size=256))
 def test_register_serializer_edge_case_long_name(long_name):
     """

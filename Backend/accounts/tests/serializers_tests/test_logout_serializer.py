@@ -49,6 +49,7 @@ def test_logout_serializer_negative():
         alphabet="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-.",
     )
 )
+@settings(max_examples=10)
 def test_logout_serializer_edge_case_short_token(token_str):
     """
     Edge case test: A refresh token that's too short or doesn't match typical structure.

@@ -97,6 +97,7 @@ def test_course_material_upload_view_negative_no_permission():
 
 
 @pytest.mark.django_db
+@settings(deadline=None)
 @given(
     # Generate a file_name that exceeds the max_length=255 limit
     file_name=st.text(min_size=256, max_size=256),

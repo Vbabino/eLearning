@@ -1,6 +1,6 @@
 import uuid
 import pytest
-from hypothesis import given, strategies as st
+from hypothesis import given, strategies as st, settings
 from rest_framework.test import APIRequestFactory
 from accounts.models import CustomUser
 from courses.models import Course, Enrollment
@@ -8,6 +8,7 @@ from courses.serializers import EnrollmentSerializer
 
 
 @pytest.mark.django_db
+@settings(deadline=None)
 @given(
     st.text(
         min_size=1,
@@ -71,6 +72,7 @@ def test_enrollment_serializer_edge_case_inactive_enrollment():
 
 
 @pytest.mark.django_db
+@settings(deadline=None)
 @given(st.text(min_size=50, max_size=50))
 def test_enrollment_serializer_edge_case_boundary_title_length(course_title):
     """

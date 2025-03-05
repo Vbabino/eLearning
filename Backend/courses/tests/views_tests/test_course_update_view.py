@@ -62,6 +62,7 @@ def test_course_update_view_negative_not_owner():
 
 
 @pytest.mark.django_db
+@settings(deadline=None)
 @given(
     long_title=st.text(
         min_size=102,

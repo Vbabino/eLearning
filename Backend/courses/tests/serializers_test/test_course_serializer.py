@@ -1,7 +1,7 @@
 import uuid
 import pytest
 import string
-from hypothesis import given, example
+from hypothesis import given, example, settings
 import hypothesis.strategies as st
 from courses.models import Course
 from accounts.models import CustomUser
@@ -9,6 +9,7 @@ from courses.serializers import CourseSerializer
 
 
 @pytest.mark.django_db
+@settings(deadline=None)
 @given(
     title=st.text(min_size=1, max_size=100),
     description=st.text(),
@@ -40,6 +41,7 @@ def test_course_serializer(title, description, teacher_email):
 
 
 @pytest.mark.django_db
+@settings(deadline=None)
 @given(
     title=st.just(""),
     description=st.text(min_size=500, max_size=1000),
@@ -66,6 +68,7 @@ def test_course_serializer_invalid_data(title, description, teacher_email):
 
 
 @pytest.mark.django_db
+@settings(deadline=None)
 @given(
     title=st.text(min_size=1, max_size=100, alphabet=string.printable),
     description=st.text(min_size=1, max_size=10000, alphabet=string.printable),

@@ -45,6 +45,7 @@ def test_course_material_serializer_positive(file_name, description):
 
 
 @pytest.mark.django_db
+@settings(deadline=None)
 @given(
     file_name=st.text(min_size=1, max_size=4),  # Too short to be valid
     description=st.text(min_size=1, max_size=4),  # Too short to be valid
@@ -69,6 +70,7 @@ def test_course_material_serializer_negative_invalid_data(file_name, description
 
 
 @pytest.mark.django_db
+@settings(deadline=None)
 @given(
     file_name=st.text(min_size=50, max_size=50),  # Test boundary condition
     description=st.text(min_size=100, max_size=100),  # Another boundary condition

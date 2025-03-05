@@ -8,6 +8,7 @@ import uuid
 
 
 @pytest.mark.django_db
+@settings(deadline=None)
 @given(
     title=st.text(
         min_size=5,
@@ -15,7 +16,6 @@ import uuid
         alphabet="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-.",
     )
 )
-@settings(deadline=None)
 def test_course_delete_view_positive(title):
     """
     Positive test: The teacher who created the course should be able to delete it.

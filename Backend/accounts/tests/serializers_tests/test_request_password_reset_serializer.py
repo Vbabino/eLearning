@@ -1,6 +1,5 @@
 import uuid
 import pytest
-from hypothesis import given, strategies as st, settings
 from accounts.models import CustomUser
 from accounts.serializers import RequestPasswordResetSerializer
 
