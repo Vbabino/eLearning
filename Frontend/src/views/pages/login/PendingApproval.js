@@ -1,5 +1,7 @@
 import React from 'react';
-import { CCard, CCardBody, CCardHeader, CContainer, CRow, CCol } from '@coreui/react';
+import { CCard, CCardBody, CCardHeader, CContainer, CRow, CCol, CNavLink, CButton } from '@coreui/react'
+import { NavLink } from 'react-router-dom'
+
 
 const PendingApproval = () => {
     return (
@@ -11,8 +13,12 @@ const PendingApproval = () => {
                 <CCardHeader>Pending Approval</CCardHeader>
                 <CCardBody>
                   <p>
-                    Your account is pending approval by the admin. Please check back later for updates.
+                    Your account is pending approval by the admin. Please check back later for
+                    updates.
                   </p>
+                  <CButton to="/login" as={NavLink} color="primary">
+                    Login
+                  </CButton>
                 </CCardBody>
               </CCard>
             </CCol>

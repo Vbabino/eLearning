@@ -11,7 +11,7 @@ import api from '../../../services/api'
 
 const UpdateUser = () => {
   const id = localStorage.getItem('id')
-  const [formData, setFormData] = useState({ first_name: '', last_name: '', email: '' })
+  const [formData, setFormData] = useState({ first_name: '', last_name: '' })
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
 

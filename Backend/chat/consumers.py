@@ -4,8 +4,8 @@ import json
 class ChatConsumer(AsyncWebsocketConsumer):
 
     async def connect(self):
-        user= self.scope["user"]
-        if user.is_anonymous:
+        user= self.scope.get("user")
+        if not user or getattr(user, "is_anonymous", True):
             await self.close()
         else:
             self.room_group_name = "chat_room"
@@ -13,7 +13,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
             await self.accept()
 
     async def disconnect(self, close_code):
-        await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
+        if hasattr(self, "room_group_name"):
+            await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
 
     async def receive(self, text_data):
         data = json.loads(text_data)
