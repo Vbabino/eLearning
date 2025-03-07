@@ -1,0 +1,137 @@
+# eLearning Platform
+
+## Project Overview
+
+This eLearning platform enables teachers to create courses, upload materials, manage students, and facilitate real-time communication. Students can enroll in courses, access materials, leave feedback, and engage in real-time chat. Notifications are sent when new materials are uploaded or when students enroll in courses.
+
+---
+
+## Project Structure
+
+```
+eLearning_project/
+┣ Backend/
+┃ ┣ accounts/
+┃ ┣ api/
+┃ ┣ chat/
+┃ ┣ core/
+┃ ┣ courses/
+┃ ┣ email_simulation/
+┃ ┣ feedback/
+┃ ┣ media/
+┃ ┣ notifications/
+┃ ┣ user_permissions/
+┃ ┣ .env
+┃ ┣ db.sqlite3
+┃ ┣ manage.py
+┃ ┣ pytest.ini
+┃ ┗ requirements.txt
+┣ Frontend/
+┃ ┣ public/
+┃ ┣ src/
+┃ ┣ .browserslistrc
+┃ ┣ .editorconfig
+┃ ┣ .gitattributes
+┃ ┣ .gitignore
+┃ ┣ .prettierignore
+┃ ┣ .prettierrc.js
+┃ ┣ LICENSE
+┃ ┣ eslint.config.mjs
+┃ ┣ index.html
+┃ ┣ package-lock.json
+┃ ┣ package.json
+┃ ┗ vite.config.mjs
+┗ .gitignore
+```
+
+---
+
+## Prerequisites
+
+- **Python 3.12**
+- **Node.js (latest stable version)**
+
+---
+
+## How to Run the Project
+
+### Backend (Django)
+
+1. Navigate to the `Backend` directory:
+   ```sh
+   cd Backend
+   ```
+2. Create and activate a virtual environment:
+   ```sh
+   python -m venv venv
+   source venv/bin/activate  # On Windows use: venv\Scripts\activate
+   ```
+3. Install dependencies:
+   ```sh
+   pip install -r requirements.txt
+   ```
+4. To approve a new user, run Django's default development server:
+   ```sh
+   python manage.py runserver 8080 # To access the admin panel
+   ```
+5. To start WebSockets and background tasks:
+   ```sh
+   daphne -b 127.0.0.1 -p 8000 core.asgi:application  # WebSockets
+   celery -A core worker --loglevel=info  # Background tasks
+   ```
+
+### Frontend (React + Vite)
+
+1. Navigate to the `Frontend` directory:
+   ```sh
+   cd Frontend
+   ```
+2. Install dependencies:
+   ```sh
+   npm install
+   ```
+3. Start the development server:
+   ```sh
+   npm start
+   ```
+
+The frontend should be accessible at [http://127.0.0.1:3000](http://localhost:3000)  
+The admin panel at [http://127.0.0.1:8080/admin/](http://localhost:8080/admin/)  
+The Daphne server at [http://127.0.0.1:8000](http://localhost:8000)
+
+---
+
+## How to Test the Application
+
+### Backend Tests
+
+Run the following command in the `Backend` directory:
+
+```sh
+pytest
+```
+
+This will execute all Django tests, including API, serializers, and WebSocket tests.
+
+### Frontend Tests
+
+Run the following command in the `Frontend` directory:
+
+```sh
+npm run test
+```
+
+This will execute all unit and integration tests for the frontend.
+
+---
+
+## Notes
+- API docummentation: [http://127.0.0.1:8000/api/docs/](http://localhost:8000/api/docs/)
+- Static files are not loaded by Daphne, therefore, run Django's development server to access the admin panel and approve a new user
+- The WebSocket and Celery processes must be running for real-time notifications and background tasks to function properly.
+
+---
+
+## Author
+
+Vittorio Babino
