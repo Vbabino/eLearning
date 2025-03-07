@@ -51,6 +51,7 @@ const Login = () => {
       localStorage.setItem(IS_APPROVED, res.data.user.is_approved)
       localStorage.setItem(USER_TYPE, res.data.user.user_type)
 
+      
       // Redirect user to home page after login
 
       navigate('/')

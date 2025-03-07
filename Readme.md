@@ -64,21 +64,26 @@ eLearning_project/
 2. Create and activate a virtual environment:
    ```sh
    python -m venv venv
+   python3 -m venv venv # MacOS
    source venv/bin/activate  # On Windows use: venv\Scripts\activate
    ```
 3. Install dependencies:
    ```sh
    pip install -r requirements.txt
    ```
-4. To approve a new user, run Django's default development server:
-   ```sh
-   python manage.py runserver 8080 # To access the admin panel
-   ```
-5. To start WebSockets and background tasks:
+4. Start WebSockets and background tasks:
    ```sh
    daphne -b 127.0.0.1 -p 8000 core.asgi:application  # WebSockets
+   redis-server # Celery tasks
    celery -A core worker --loglevel=info  # Background tasks
    ```
+5. To approve a new user, run Django's default development server:
+   ```sh
+   python manage.py runserver 8080 # To access the admin panel
+
+   and go to te admin panel: http://localhost:8080/admin/
+   ```
+
 
 ### Frontend (React + Vite)
 
@@ -113,22 +118,12 @@ pytest
 
 This will execute all Django tests, including API, serializers, and WebSocket tests.
 
-### Frontend Tests
-
-Run the following command in the `Frontend` directory:
-
-```sh
-npm run test
-```
-
-This will execute all unit and integration tests for the frontend.
-
 ---
 
 ## Notes
-- API docummentation: [http://127.0.0.1:8000/api/docs/](http://localhost:8000/api/docs/)
-- Static files are not loaded by Daphne, therefore, run Django's development server to access the admin panel and approve a new user
-- The WebSocket and Celery processes must be running for real-time notifications and background tasks to function properly.
+- API documentation: [http://127.0.0.1:8000/api/docs/](http://localhost:8000/api/docs/)
+- Static files are not loaded by Daphne, therefore, run Django's development server to access the admin panel to approve a new user
+- The WebSocket, Redis and Celery processes must be running for real-time notifications and background tasks to function properly.
 
 ---
 

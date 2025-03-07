@@ -38,7 +38,6 @@ const ViewEnrolledStudents = () => {
       })
   }, [])
 
-  console.log(students)
 
   const handleRemoveStudent = (enrollmentId, courseId, studentID) => {
     const data = { id: enrollmentId, course_id: courseId, is_active: false, student: studentID }
@@ -65,6 +64,12 @@ const ViewEnrolledStudents = () => {
         console.error('Error unblocking student:', error)
       })
   }
+
+   const userType = localStorage.getItem('user_type')
+
+   if (userType !== 'teacher') {
+     return <div>Access Denied</div>
+   }
 
   if (Object.keys(students).length === 0) {
     return <div>No students enrolled in any course.</div>

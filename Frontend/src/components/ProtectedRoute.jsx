@@ -54,8 +54,11 @@ function ProtectedRoute({ children }) {
         return <div>Loading...</div>;
     }
     
-    const isApproved = localStorage.getItem(IS_APPROVED) === "true";
+    const isApproved = localStorage.getItem(IS_APPROVED);
+
     if (!isApproved) {
+        return <Navigate to="/register" />;
+    } else if (isApproved === "false") {
         return <Navigate to="/pending-approval" />;
     }
 
