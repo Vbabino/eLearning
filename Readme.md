@@ -74,16 +74,22 @@ eLearning_project/
 4. Start WebSockets and background tasks:
    ```sh
    daphne -b 127.0.0.1 -p 8000 core.asgi:application  # WebSockets
-   redis-server # Celery tasks
+   redis-server # Redis 
    celery -A core worker --loglevel=info  # Background tasks
    ```
 5. To approve a new user, run Django's default development server:
+
    ```sh
    python manage.py runserver 8080 # To access the admin panel
 
    and go to te admin panel: http://localhost:8080/admin/
    ```
 
+6. Admin Credentials
+   ```sh
+   email: admin@email.com
+   password: admin123
+   ```
 
 ### Frontend (React + Vite)
 
@@ -106,9 +112,40 @@ The Daphne server at [http://127.0.0.1:8000](http://localhost:8000)
 
 ---
 
+## Demo Accounts
+
+### Teachers:
+
+email: testuser1@example.com  
+password: testuser1
+
+email: testuser2@example.com  
+password: testuser2
+
+email: teacher1@email.com  
+password: teacher1
+
+### Students:
+
+email: student1@example.com  
+password: student1
+
+email: samsmith@email.com  
+password: samsmith1
+
+email: michaellynch@email.com  
+password: michaellynch
+
+email: testuser3@example.com  
+password: testuser3
+
+---
+
 ## How to Test the Application
 
 ### Backend Tests
+
+`Important:` Make sure Daphne, Celery and Redis are running `before` running the tests
 
 Run the following command in the `Backend` directory:
 
@@ -121,6 +158,7 @@ This will execute all Django tests, including API, serializers, and WebSocket te
 ---
 
 ## Notes
+
 - API documentation: [http://127.0.0.1:8000/api/docs/](http://localhost:8000/api/docs/)
 - Static files are not loaded by Daphne, therefore, run Django's development server to access the admin panel to approve a new user
 - The WebSocket, Redis and Celery processes must be running for real-time notifications and background tasks to function properly.
