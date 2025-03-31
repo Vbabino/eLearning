@@ -65,11 +65,11 @@ def test_request_password_reset_serializer_edge_case_long_email():
     is_valid = serializer.is_valid()
 
     if is_valid:
-        # If it passes validation and DB constraints, ensure save() works
+        
         result = serializer.save()
         assert "message" in result, "Expected a 'message' field in serializer output."
         assert result["message"] == "OTP sent to email.", "Expected OTP sending confirmation."
     else:
-        # If system does not permit such long emails
+    
         assert not is_valid, "Serializer should be invalid for an overly long email."
         assert "email" in serializer.errors, "Expected an error on the 'email' field."

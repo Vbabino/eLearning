@@ -27,7 +27,7 @@ def test_login_serializer_positive():
     ), f"Serializer should be valid. Errors: {serializer.errors}"
     result = (
         serializer.validated_data
-    )  # This triggers the .validate() method of LoginSerializer
+    ) 
 
     # Check result for expected fields
     assert "access" in result, "Expected access token in response."

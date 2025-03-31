@@ -9,7 +9,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 def generate_valid_image():
     """Create an in-memory image file."""
     image_io = BytesIO()
-    image = Image.new("RGB", (100, 100), color=(255, 0, 0))  # Red square
+    image = Image.new("RGB", (100, 100), color=(255, 0, 0)) 
     image.save(image_io, format="PNG")
     image_io.seek(0)
     return SimpleUploadedFile(
