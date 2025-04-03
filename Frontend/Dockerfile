@@ -1,13 +1,17 @@
-FROM node:20
+FROM node:18-alpine
 
 WORKDIR /frontend
 
-COPY Frontend/package*.json ./
+COPY package.json .
 RUN npm install
 
-COPY Frontend/ ./
+RUN npm i -g serve
+
+COPY . . 
 
 RUN npm run build
+
+EXPOSE 3000
 
 # Serve with a lightweight HTTP server
 RUN npm install -g serve

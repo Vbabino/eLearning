@@ -53,8 +53,9 @@ services:
 
   frontend:
     build:
-      context: .
-      dockerfile: Frontend/Dockerfile
+      context: ./Frontend
+      dockerfile: Dockerfile
+
     container_name: eLearning_frontend
     restart: always
     volumes:

@@ -21,7 +21,7 @@ const Notifications = () => {
     // WebSocket connection
     const token = localStorage.getItem('access')
     if (!token) return
-    const ws = new WebSocket(`ws://localhost:8000/ws/notifications/?token=${token}`)
+    const ws = new WebSocket(`ws://144.126.234.87:8002/ws/notifications/?token=${token}`)
 
     ws.onopen = () => {
       console.log('WebSocket connected')

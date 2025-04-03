@@ -3,7 +3,7 @@ import { ACCESS_TOKEN } from "../constants";
 
 
 const api = axios.create({
-  baseURL: 'http://eLearning_backend:8000'
+  baseURL: 'http://144.126.234.87:8002/'
 })
 
 api.interceptors.request.use(
